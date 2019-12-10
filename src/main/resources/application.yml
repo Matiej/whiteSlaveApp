@@ -1,0 +1,157 @@
+spring:
+  profiles:
+    active:  "dev"
+  application:
+    name: whiteslaveApp
+  output:
+    ansi:
+      enabled: always
+  #ACTUATOR INFO
+info:
+  app:
+    name: whiteslaveApp
+    description: application has been created by Matiej. Try to get infro from white companys list
+    version: 1.0.1-SNAPSHOT
+    owner:
+      name: Maciek
+      surname: Wójcik
+      phone: 999
+    administrator:
+      email: maciek@testaarosa.pl
+      addres:
+        city: Warsaw
+        location: West side
+---
+spring:
+  profiles: dev
+
+    ###
+    #   H2 Settings
+  ###
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings:
+        trace: false
+        web-allow-others: false
+
+
+    ###
+    #   Database Settings
+    ###
+  datasource:
+    url: jdbc:h2:mem:whiteDb
+    username: sa
+    password:
+    driver:
+      driver-class-name: org.h2.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    generate-ddl: true
+    hibernate:
+      ddl-auto=create: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        generate_statistics: true
+        use_sql_comments: true
+        format_sql: true
+  #        hbm2ddl:
+  #          import_files: /startData.sql
+  #  autoconfigure:
+  #    exclude: org.springframework.boot.autoconfigure.security.SecurityAutoConfiguration
+  #  groovy:
+  #    template:
+  #      check-template-location: false
+  logging:
+    level:
+      org.springframework: ERROR
+      com.whiteslave: DEBUG
+      org:
+        hibernate:
+          type: TRACE
+        stat: DEBUG
+  #      springframework: INFO
+server:
+  port: 8080
+
+feign:
+  name: whiteListGov
+  url: https://wl-test.mf.gov.pl/api/
+
+#actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+    health:
+      show-details: ALWAYS
+---
+spring:
+  profiles: test
+    ###
+  #   H2 Settings
+  ###
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings:
+        trace: false
+        web-allow-others: false
+
+    ###
+    #   Database Settings
+    ###
+  datasource:
+    url: jdbc:h2:mem:whiteDb
+    username: sa
+    password:
+    driver:
+      driver-class-name: org.h2.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    generate-ddl: true
+    hibernate:
+      ddl-auto=create: update
+    show-sql: false
+    properties:
+      hibernate:
+        generate_statistics: false
+        use_sql_comments: true
+        format_sql: true
+  #        hbm2ddl:
+  #          import_files: /startData.sql
+  #  autoconfigure:
+  #    exclude: org.springframework.boot.autoconfigure.security.SecurityAutoConfiguration
+  #  groovy:
+  #    template:
+  #      check-template-location: false
+  logging:
+    level:
+      org.springframework: ERROR
+      com.whiteslave: DEBUG
+      org:
+        hibernate:
+          type: INFO
+  #        stat: DEBUG
+  #      springframework: INFO
+server:
+  port: 8089
+
+feign:
+  name: whiteListGov
+  url: https://wl-test.mf.gov.pl/api/
+
+#actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+    health:
+      show-details: ALWAYS
