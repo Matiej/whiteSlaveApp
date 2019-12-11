@@ -8,14 +8,18 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonClassDescription(value = "result")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CheckResult {
+public class MfGovSearchResults {
 
-    private String accountAssigned;
+    @JsonProperty("requestId")
     private String requestId;
+    @JsonProperty("subjects")
+    private List<MfGovSubject> mfGovSubjectList;
 }

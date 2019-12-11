@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Partners {
+public class MfGovPartners {
 
     private String companyName, firstName, lastName, nip, pesel;
 
