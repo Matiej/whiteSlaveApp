@@ -15,7 +15,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Subject {
+public class MfGovSubject {
 
     private String name;
     private String nip;
@@ -26,13 +26,13 @@ public class Subject {
     private String residenceAddress;
     private String workingAddress;
     @JsonProperty("representatives")
-    private List<Representatives> representativesList;
+    private List<MfGovRepresentatives> mfGovRepresentativesList;
 
     @JsonProperty("authorizedClerks")
-    private List<AuthorizedClerks> authorizedClerksList;
+    private List<MfGovAuthorizedClerks> mfGovAuthorizedClerksList;
 
     @JsonProperty("partners")
-    private List<Partners> partnersList;
+    private List<MfGovPartners> mfGovPartnersList;
 
     private LocalDate registrationLegalDate;
     private String registrationDenialBasis;
@@ -57,9 +57,9 @@ public class Subject {
                 ", krs='" + krs + '\'' +
                 ", residenceAddress='" + residenceAddress + '\'' +
                 ", workingAddress='" + workingAddress + '\'' +
-                ", representativesList=" + representativesList +
-                ", authorizedClerksList=" + authorizedClerksList +
-                ", partnersList=" + partnersList +
+                ", representativesList=" + mfGovRepresentativesList +
+                ", authorizedClerksList=" + mfGovAuthorizedClerksList +
+                ", partnersList=" + mfGovPartnersList +
                 ", registrationLegalDate=" + registrationLegalDate +
                 ", registrationDenialBasis='" + registrationDenialBasis + '\'' +
                 ", registrationDenialDate='" + registrationDenialDate + '\'' +

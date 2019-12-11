@@ -7,8 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class SearchResources {
+public class MfGovCheckResource {
 
-    private SearchResults result;
-
+    private MfGovCheckResult result;
 }
