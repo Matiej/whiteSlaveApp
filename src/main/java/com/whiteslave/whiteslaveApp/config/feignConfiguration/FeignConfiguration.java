@@ -18,22 +18,22 @@
 //import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 //
 //@Configuration
-//@EnableFeignClients
-//@ImportAutoConfiguration({FeignAutoConfiguration.class})
+////@EnableFeignClients
+////@ImportAutoConfiguration({FeignAutoConfiguration.class})
 //public class FeignConfiguration {
 //
-//    @Bean
-//    @Scope("prototype")
-//    public Feign.Builder feignBuilder() {
-//        return Feign.builder();
-//    }
+////    @Bean
+////    @Scope("prototype")
+////    public Feign.Builder feignBuilder() {
+////        return Feign.builder();
+////    }
 //
-//    @Bean
-//    public Decoder feignDecoder() {
-//        HttpMessageConverter jacksonConverter = new MappingJackson2HttpMessageConverter(new ObjectMapper());
-//        ObjectFactory<HttpMessageConverters> objectFactory = () -> new HttpMessageConverters(jacksonConverter);
-//        return new ResponseEntityDecoder(new SpringDecoder(objectFactory));
-//    }
+////    @Bean
+////    public Decoder feignDecoder() {
+////        HttpMessageConverter jacksonConverter = new MappingJackson2HttpMessageConverter(new ObjectMapper());
+////        ObjectFactory<HttpMessageConverters> objectFactory = () -> new HttpMessageConverters(jacksonConverter);
+////        return new ResponseEntityDecoder(new SpringDecoder(objectFactory));
+////    }
 //
 //    @Bean
 //    Logger.Level feignLoggerLevel() {

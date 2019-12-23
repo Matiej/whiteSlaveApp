@@ -79,7 +79,7 @@ server:
 
 feign:
   name: whiteListGov
-  url: https://wl-test.mf.gov.pl/api/
+  url: https://wl-api.mf.gov.pl/api
 
 #actuator
 management:
