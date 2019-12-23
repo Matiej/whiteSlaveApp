@@ -19,9 +19,9 @@ public class AppRunner  implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
-        System.out.println("^^^^^^^^^^^^^^^^^^^^^^^^^^^ STARTUJE SEARCH BY BANK ACCOUNT");
-        SearchReportDto searchReportDto = searchReportService.searchByBankAccountAndDate("84941126311377623540801172", "2019-12-05");
-        System.out.println(searchReportDto);
+//        System.out.println("^^^^^^^^^^^^^^^^^^^^^^^^^^^ STARTUJE SEARCH BY BANK ACCOUNT");
+//        SearchReportDto searchReportDto = searchReportService.searchByBankAccountAndDate("84941126311377623540801172", "2019-12-05");
+//        System.out.println(searchReportDto);
 //        MfGovSearchResources searchByBankAccountAndDate = mfGovWhiteListClient.searchByBankAccountAndDate("84941126311377623540801172", "2019-12-05");
 //        System.out.println(searchByBankAccountAndDate);
 //
