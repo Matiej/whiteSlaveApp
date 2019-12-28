@@ -4,7 +4,7 @@ import javax.validation.ConstraintValidatorContext;
 import java.util.Arrays;
 import java.util.Map;
 
-public abstract class ParamsSharedValidator {
+public abstract class GovNumbersSharedValidator {
 
     private final static String DIGIT_REGEX = "[0-9]+";
     private final static String MULTI_PARAM_SEPARATOR = ",";

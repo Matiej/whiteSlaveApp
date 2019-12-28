@@ -1,5 +1,10 @@
 package com.whiteslave.whiteslaveApp;
 
+import org.apache.commons.validator.routines.DateValidator;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAccessor;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -125,16 +130,26 @@ public class App {
         String longRegon = "02807465847456";
         String regon = "65465";
 
-        int sumka = 1*8 + 2*9 + 3*2 + 4*3 + 5*4 + 6*5 + 7*6 + 8*7;
+        int sumka = 1 * 8 + 2 * 9 + 3 * 2 + 4 * 3 + 5 * 4 + 6 * 5 + 7 * 6 + 8 * 7;
         System.out.println(sumka);
-
-        boolean b = checksumValidation(shortRegon);
-        System.out.println(b);
-        System.out.println(checkSum14(longRegon));
+        String somedate = "2019-12-25";
+        boolean isDateV = dateV(somedate);
+        System.out.println(isDateV);
+//        boolean b = checksumValidation(shortRegon);
+//        System.out.println(b);
+//        System.out.println(checkSum14(longRegon));
 
 //        System.out.println(lengthValidation(regons,shortRegon));
 //        System.out.println(lengthValidation(regons,longRegon));
 //        System.out.println(lengthValidation(regons,regon));
+    }
+
+    static boolean dateV(String date) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate testDate = LocalDate.parse(date);
+        boolean after = testDate.isAfter(LocalDate.now());
+
+        return after;
     }
 
     static boolean lengthValidation(int[] requiredLength, String param) {
@@ -147,7 +162,7 @@ public class App {
         IntStream.range(0, WEIGHT_9_DIGIT.length).forEach(i -> {
             int i1 = WEIGHT_9_DIGIT[i];
             int c = Integer.parseInt(String.valueOf(param.charAt(i)));
-            sum.addAndGet(i1 *  c);
+            sum.addAndGet(i1 * c);
         });
         return Optional.of(sum.get())
                 .map(s -> s % 11)
@@ -161,8 +176,9 @@ public class App {
                     return false;
                 }).orElse(false);
     }
+
     static boolean checkSum14(String regon14) {
-         int[] WEIGHT_14_DIGIT = new int[]{2, 4, 8, 5,   0, 9, 7, 3,   6, 1, 2, 4, 8};
+        int[] WEIGHT_14_DIGIT = new int[]{2, 4, 8, 5, 0, 9, 7, 3, 6, 1, 2, 4, 8};
         AtomicInteger sum = new AtomicInteger();
         IntStream.range(0, WEIGHT_14_DIGIT.length).forEach(i -> {
             sum.addAndGet(WEIGHT_14_DIGIT[i] *
@@ -171,7 +187,7 @@ public class App {
         return Optional.of(sum.get())
                 .map(s -> s % 11)
                 .map(s -> {
-                    if(s == 10) {
+                    if (s == 10) {
                         s = 0;
                     }
                     return s == Integer.parseInt(regon14.substring(regon14.length() - 1));

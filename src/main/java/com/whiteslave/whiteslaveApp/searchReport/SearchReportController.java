@@ -20,16 +20,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
-@Validated
 @RestController
-@RequestMapping("/search/")
+@RequestMapping("/search")
 @RequiredArgsConstructor
+@Api(description = "Search for company reports/information in gov white list.")
 public class SearchReportController {
 
     private final SearchReportService searchReportService;
 
     @GetMapping("/bankAccount/date")
-    @ApiOperation(value = "Search company by bank account no and date. ", response = SearchReportDto.class)
+    @ApiOperation(value = "Search company by bank account number and date. ", response = SearchReportDto.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Search successful"),
             @ApiResponse(code = 400, message = "The request cannot be fulfilled because of wrong syntax"),
@@ -129,7 +129,7 @@ public class SearchReportController {
     })
     ResponseEntity<Object> searchByRegonAndDate(@RequestParam("regon") String regon, @RequestParam("date") String date) {
         String prepareSignleValue = checkAndPrepareSignleValue(regon);
-        return ResponseEntity.ok(searchReportService.searchByRegonAndDate(prepareSignleValue,date));
+        return ResponseEntity.ok(searchReportService.searchByRegonAndDate(prepareSignleValue, date));
     }
 
     @GetMapping("/regons/date")
@@ -160,8 +160,8 @@ public class SearchReportController {
         final String valueSeparator = ",";
         List<String> stringList = Arrays.asList(multipleVal.strip().replaceAll("-", "").split(valueSeparator));
         return stringList.stream()
-                .map(t-> t.trim())
-                .filter(trimedVal-> !trimedVal.isEmpty() || !trimedVal.isBlank())
+                .map(t -> t.trim())
+                .filter(trimedVal -> !trimedVal.isEmpty() || !trimedVal.isBlank())
                 .collect(Collectors.joining(valueSeparator));
     }
 
