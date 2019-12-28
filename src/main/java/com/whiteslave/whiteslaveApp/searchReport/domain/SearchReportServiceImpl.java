@@ -7,8 +7,6 @@ import com.whiteslave.whiteslaveApp.searchReport.domain.dto.SearchReportDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import javax.validation.ValidationException;
-
 @Service
 @RequiredArgsConstructor
 class SearchReportServiceImpl implements SearchReportService {
@@ -30,7 +28,7 @@ class SearchReportServiceImpl implements SearchReportService {
     }
 
     @Override
-    public SearchReportDto searchByNipAndDate(String nip, String date) throws ValidationException {
+    public SearchReportDto searchByNipAndDate(String nip, String date) {
         MfGovSearchResource mfGovSearchResource = mfGovWhiteListClient.searchByNipAndDate(nip, date);
         return conventer.convertMfSearchResource2SearchReportDto(mfGovSearchResource);
     }

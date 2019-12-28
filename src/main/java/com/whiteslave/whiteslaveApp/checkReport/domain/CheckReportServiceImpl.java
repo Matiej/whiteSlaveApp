@@ -3,7 +3,6 @@ package com.whiteslave.whiteslaveApp.checkReport.domain;
 import com.whiteslave.whiteslaveApp.checkReport.domain.dto.CheckReportDto;
 import com.whiteslave.whiteslaveApp.client.MfGovWhiteListClient;
 import com.whiteslave.whiteslaveApp.client.dto.MfGovCheckResource;
-import com.whiteslave.whiteslaveApp.searchReport.domain.dto.SearchReportDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -11,8 +10,8 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 class CheckReportServiceImpl implements CheckReportService {
 
-    private MfGovWhiteListClient mfGovWhiteListClient;
-    private MfGovCheck2CheckReportDtoConverter converter;
+    private final MfGovWhiteListClient mfGovWhiteListClient;
+    private final MfGovCheck2CheckReportDtoConverter converter;
 
     @Override
     public CheckReportDto checkByNipAndBankAccoutAndDate(String nip, String bankAccount, String date) {
