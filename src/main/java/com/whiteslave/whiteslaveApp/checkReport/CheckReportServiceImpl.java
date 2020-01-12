@@ -1,4 +1,4 @@
-package com.whiteslave.whiteslaveApp.checkReport.domain;
+package com.whiteslave.whiteslaveApp.checkReport;
 
 import com.whiteslave.whiteslaveApp.checkReport.domain.dto.CheckReportDto;
 import com.whiteslave.whiteslaveApp.client.MfGovWhiteListClient;

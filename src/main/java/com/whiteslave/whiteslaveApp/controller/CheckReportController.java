@@ -1,17 +1,14 @@
-package com.whiteslave.whiteslaveApp.checkReport;
+package com.whiteslave.whiteslaveApp.controller;
 
-import com.whiteslave.whiteslaveApp.checkReport.domain.CheckReportService;
+import com.whiteslave.whiteslaveApp.checkReport.CheckReportService;
 import com.whiteslave.whiteslaveApp.checkReport.domain.dto.CheckReportDto;
-import com.whiteslave.whiteslaveApp.searchReport.domain.dto.SearchReportDto;
+import com.whiteslave.whiteslaveApp.reportSync.ReportSyncService;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @Validated
@@ -19,9 +16,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/check")
 @RequiredArgsConstructor
 @Api(description = "Quick check for company information inf gov white list.")
+@CrossOrigin(origins = "http://localhost:4200")
 public class CheckReportController {
 
     private final CheckReportService checkReportService;
+    private final ReportSyncService reportSyncService;
 
     @GetMapping("/nip&bankaccount/date")
     @ApiOperation(value = "Check for quick company information by nip, bank account number and date.", response = CheckReportDto.class)
@@ -45,6 +44,7 @@ public class CheckReportController {
         String preparedBankAccount = checkAndPrepareSignleValue(bankAccount);
         String preparedNip = checkAndPrepareSignleValue(nip);
         CheckReportDto checkReportDto = checkReportService.checkByNipAndBankAccoutAndDate(preparedNip, preparedBankAccount, date);
+        reportSyncService.synAndSaveCheckReport(checkReportDto, preparedNip, preparedBankAccount, date);
         return ResponseEntity.ok(checkReportDto);
     }
 
@@ -70,6 +70,7 @@ public class CheckReportController {
         String preparedBankAccount = checkAndPrepareSignleValue(bankAccount);
         String preparedReqgon = checkAndPrepareSignleValue(regon);
         CheckReportDto checkReportDto = checkReportService.checkByRegonAndBankAccoutnAndDate(preparedReqgon, preparedBankAccount, date);
+        reportSyncService.synAndSaveCheckReport(checkReportDto, preparedBankAccount, preparedReqgon,date);
         return ResponseEntity.ok(checkReportDto);
     }
 
@@ -78,5 +79,6 @@ public class CheckReportController {
     private String checkAndPrepareSignleValue(String singleValue) {
         return singleValue.strip().replaceAll("-", "");
     }
+
 
 }
