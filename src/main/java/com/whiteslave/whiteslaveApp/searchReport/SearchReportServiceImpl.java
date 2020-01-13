@@ -1,8 +1,9 @@
-package com.whiteslave.whiteslaveApp.searchReport.domain;
+package com.whiteslave.whiteslaveApp.searchReport;
 
 import com.whiteslave.whiteslaveApp.client.MfGovWhiteListClient;
 import com.whiteslave.whiteslaveApp.client.dto.MfGovSearchResource;
 import com.whiteslave.whiteslaveApp.client.dto.MfGovSearchResources;
+import com.whiteslave.whiteslaveApp.searchReport.domain.SearchReportService;
 import com.whiteslave.whiteslaveApp.searchReport.domain.dto.SearchReportDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
