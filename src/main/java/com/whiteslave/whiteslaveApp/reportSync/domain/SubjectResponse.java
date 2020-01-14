@@ -1,8 +1,5 @@
 package com.whiteslave.whiteslaveApp.reportSync.domain;
 
-import com.whiteslave.whiteslaveApp.searchReport.domain.dto.AuthorizedClerksDto;
-import com.whiteslave.whiteslaveApp.searchReport.domain.dto.PartnersDto;
-import com.whiteslave.whiteslaveApp.searchReport.domain.dto.RepresentativesDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;

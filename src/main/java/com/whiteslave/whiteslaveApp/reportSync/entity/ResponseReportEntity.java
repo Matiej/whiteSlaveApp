@@ -6,7 +6,6 @@ import lombok.Setter;
 import javax.persistence.*;
 
 @Getter
-@Setter
 @Entity(name = "ReportEntity")
 @Table(name = "REPORT_RESPONSE")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
@@ -19,6 +18,7 @@ public class ResponseReportEntity {
     @Column(name = "RES_ID")
     private Long id;
 
+    @Setter
     @Column(name = "RES_GOV_REQUEST_ID")
     private String requestId;
 

@@ -1,5 +1,6 @@
 package com.whiteslave.whiteslaveApp.controller;
 
+import com.whiteslave.whiteslaveApp.reportSync.ReportSyncService;
 import com.whiteslave.whiteslaveApp.searchReport.domain.SearchReportService;
 import com.whiteslave.whiteslaveApp.searchReport.domain.dto.SearchReportDto;
 import com.whiteslave.whiteslaveApp.validator.NipNumber;
@@ -25,6 +26,7 @@ import java.util.stream.Collectors;
 public class SearchReportController {
 
     private final SearchReportService searchReportService;
+    private final ReportSyncService reportSyncService;
 
     @GetMapping("/bankAccount/date")
     @ApiOperation(value = "Search company by bank account number and date. ", response = SearchReportDto.class)
@@ -86,6 +88,7 @@ public class SearchReportController {
                                               @RequestParam("date") String date) {
         String prepareSignleValue = checkAndPrepareSignleValue(nip);
         SearchReportDto reportDto = searchReportService.searchByNipAndDate(prepareSignleValue, date);
+        reportSyncService.syncAndSaveSearchReport(reportDto, prepareSignleValue, date);
         return ResponseEntity.ok().body(reportDto);
     }
 

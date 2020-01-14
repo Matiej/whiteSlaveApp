@@ -1,5 +1,6 @@
 package com.whiteslave.whiteslaveApp.reportSync.entity;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,6 +9,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 @Entity
+@Builder
 @Table(name = "REPRESENTATIVES_RESPONSE")
 public class RepresentativesResponseEntity {
 

@@ -5,6 +5,7 @@ import com.whiteslave.whiteslaveApp.reportSync.domain.ReportSyncRequest;
 import com.whiteslave.whiteslaveApp.reportSync.domain.enums.ReportType;
 import com.whiteslave.whiteslaveApp.reportSync.domain.enums.SearchResult;
 import com.whiteslave.whiteslaveApp.reportSync.entity.ReportSyncRequestEntity;
+import com.whiteslave.whiteslaveApp.searchReport.domain.dto.SearchReportDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,12 +19,13 @@ import java.util.Map;
 @RequiredArgsConstructor
 class ReportSyncServiceImpl implements ReportSyncService {
 
-    private final CheckReportDto2CheckGovReportSyncConverter converter;
+    private final CheckReportDto2CheckGovReportSyncConverter checkGovReportSyncConverter;
+    private final SearchReportDto2SearchGovReportSyncConverter searchGovReportSyncConverter;
     private final ReportSyncRequest2EntityConverter entityConverter;
     private final ReportSyncRequestEntityRepository repository;
 
     @Override
-    public void synAndSaveCheckReport(CheckReportDto checkReportDto, String...requestParams) {
+    public void syncAndSaveCheckReport(CheckReportDto checkReportDto, String...requestParams) {
         Map<String, String> params = prepareParams(requestParams);
         //todo zrobić plik PDF i zapisać jego dane
         ReportSyncRequest reportSyncRequest = ReportSyncRequest.builder()
@@ -32,7 +34,7 @@ class ReportSyncServiceImpl implements ReportSyncService {
                 .pdfFileName("some.pdf")
                 .searchResult(checkReportDto.getAccountAssigned().equals("TAK") ? SearchResult.POSITIVE : SearchResult.NEGATIVE)
                 .reportType(ReportType.CHECK)
-                .govResponseReportSync(converter.convertToCheckGovReportSync(checkReportDto))
+                .govResponseReportSync(checkGovReportSyncConverter.convertToCheckGovReportSync(checkReportDto))
                 .requestNip(params.get("NIP"))
                 .requestRegon(params.get("REGON"))
                 .requestBankAccount(params.get("BANKACCOUNT"))
@@ -44,6 +46,24 @@ class ReportSyncServiceImpl implements ReportSyncService {
         //convert to entity
         //save entity to data base
 
+    }
+
+    @Override
+    public void syncAndSaveSearchReport(SearchReportDto searchReportDto, String... requestParams) {
+        Map<String, String> params = prepareParams(requestParams);
+        ReportSyncRequest reportSyncRequest = ReportSyncRequest.builder()
+                .requestDate(LocalDateTime.now().withNano(0))
+                .reportDate(LocalDate.parse(params.get("DATE")))
+                .pdfFileName("some.pdf")
+                .searchResult(searchReportDto.getSubjectDtoList().size()>0 ? SearchResult.POSITIVE : SearchResult.NEGATIVE)
+                .reportType(ReportType.SEARCH)
+                .govResponseReportSync(searchGovReportSyncConverter.convertToSearchGovResponseReportSync(searchReportDto))
+                .requestNip(params.get("NIP"))
+                .requestRegon(params.get("REGON"))
+                .requestBankAccount(params.get("BANKACCOUNT"))
+                .build();
+        ReportSyncRequestEntity reportSyncRequestEntity = entityConverter.convert2Entity(reportSyncRequest);
+        repository.save(reportSyncRequestEntity);
     }
 
     //todo kurwa jaka tragedia. Cos tym trza zrobic.

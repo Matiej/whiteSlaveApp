@@ -1,5 +1,6 @@
 package com.whiteslave.whiteslaveApp.reportSync.entity;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,6 +11,7 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
+@Builder
 @Table(name = "SUBJECT_RESPONSE")
 public class SubjectEntity {
 
