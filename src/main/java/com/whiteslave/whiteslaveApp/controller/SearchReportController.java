@@ -110,6 +110,7 @@ public class SearchReportController {
     ResponseEntity<Object> searchByNipsAndDate(@RequestParam("nips") String nips, @RequestParam("date") String date) {
         String prepareMultiplePValues = checkAndPrepareMultiplePValues(nips);
         SearchReportDto reportDto = searchReportService.searchByNipsAndDate(prepareMultiplePValues, date);
+        reportSyncService.syncAndSaveSearchReport(reportDto, prepareMultiplePValues, date);
         return ResponseEntity.ok(reportDto);
     }
 
@@ -130,7 +131,9 @@ public class SearchReportController {
     })
     ResponseEntity<Object> searchByRegonAndDate(@RequestParam("regon") String regon, @RequestParam("date") String date) {
         String prepareSignleValue = checkAndPrepareSignleValue(regon);
-        return ResponseEntity.ok(searchReportService.searchByRegonAndDate(prepareSignleValue, date));
+        SearchReportDto reportDto = searchReportService.searchByRegonAndDate(prepareSignleValue, date);
+        reportSyncService.syncAndSaveSearchReport(reportDto, prepareSignleValue, date);
+        return ResponseEntity.ok(reportDto);
     }
 
     @GetMapping("/regons/date")
@@ -150,7 +153,9 @@ public class SearchReportController {
     })
     ResponseEntity<Object> searchByRegonsAndDate(@RequestParam String regons, @RequestParam String date) {
         String multiplePValues = checkAndPrepareMultiplePValues(regons);
-        return ResponseEntity.ok(searchReportService.searchByRegonsAndDate(multiplePValues, date));
+        SearchReportDto reportDto = searchReportService.searchByRegonsAndDate(multiplePValues, date);
+        reportSyncService.syncAndSaveSearchReport(reportDto, multiplePValues, date);
+        return ResponseEntity.ok(reportDto);
     }
 
     private String checkAndPrepareSignleValue(String singleValue) {
