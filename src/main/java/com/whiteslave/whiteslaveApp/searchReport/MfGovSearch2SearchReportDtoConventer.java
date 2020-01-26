@@ -1,4 +1,4 @@
-package com.whiteslave.whiteslaveApp.searchReport.domain;
+package com.whiteslave.whiteslaveApp.searchReport;
 
 import com.whiteslave.whiteslaveApp.client.dto.*;
 import com.whiteslave.whiteslaveApp.searchReport.domain.dto.*;
