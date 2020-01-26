@@ -47,7 +47,7 @@ public class SubjectEntity {
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
-    @JoinColumn(name = "ACL)SUB_ID")
+    @JoinColumn(name = "ACL_SUB_ID")
     private List<AuthorizedClerksResponseEntity> authorizedClerksResponseEntityList;
 
     @OneToMany(
