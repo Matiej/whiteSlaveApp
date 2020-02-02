@@ -1,7 +1,7 @@
 package com.whiteslave.whiteslaveApp.reportSync;
 
 import com.whiteslave.whiteslaveApp.reportSync.domain.*;
-import com.whiteslave.whiteslaveApp.searchReport.domain.dto.*;
+import com.whiteslave.whiteslaveApp.govRequestReport.searchReport.domain.dto.*;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;

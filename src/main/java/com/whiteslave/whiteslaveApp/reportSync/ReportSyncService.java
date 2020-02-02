@@ -1,7 +1,7 @@
 package com.whiteslave.whiteslaveApp.reportSync;
 
-import com.whiteslave.whiteslaveApp.checkReport.domain.dto.CheckReportDto;
-import com.whiteslave.whiteslaveApp.searchReport.domain.dto.SearchReportDto;
+import com.whiteslave.whiteslaveApp.govRequestReport.checkReport.domain.dto.CheckReportDto;
+import com.whiteslave.whiteslaveApp.govRequestReport.searchReport.domain.dto.SearchReportDto;
 
 public interface ReportSyncService {
 

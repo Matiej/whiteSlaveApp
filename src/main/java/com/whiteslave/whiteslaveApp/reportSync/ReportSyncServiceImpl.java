@@ -1,11 +1,11 @@
 package com.whiteslave.whiteslaveApp.reportSync;
 
-import com.whiteslave.whiteslaveApp.checkReport.domain.dto.CheckReportDto;
+import com.whiteslave.whiteslaveApp.govRequestReport.checkReport.domain.dto.CheckReportDto;
 import com.whiteslave.whiteslaveApp.reportSync.domain.ReportSyncRequest;
 import com.whiteslave.whiteslaveApp.reportSync.domain.enums.ReportType;
 import com.whiteslave.whiteslaveApp.reportSync.domain.enums.SearchResult;
 import com.whiteslave.whiteslaveApp.reportSync.entity.ReportSyncRequestEntity;
-import com.whiteslave.whiteslaveApp.searchReport.domain.dto.SearchReportDto;
+import com.whiteslave.whiteslaveApp.govRequestReport.searchReport.domain.dto.SearchReportDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
