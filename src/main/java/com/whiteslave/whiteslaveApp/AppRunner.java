@@ -1,8 +1,7 @@
 package com.whiteslave.whiteslaveApp;
 
-import com.whiteslave.whiteslaveApp.client.MfGovWhiteListClient;
-import com.whiteslave.whiteslaveApp.searchReport.domain.SearchReportService;
-import com.whiteslave.whiteslaveApp.searchReport.domain.dto.SearchReportDto;
+import com.whiteslave.whiteslaveApp.govRequestReport.client.MfGovWhiteListClient;
+import com.whiteslave.whiteslaveApp.govRequestReport.searchReport.domain.SearchReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;

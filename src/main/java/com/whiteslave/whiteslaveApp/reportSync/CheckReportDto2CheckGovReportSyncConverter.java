@@ -1,6 +1,6 @@
 package com.whiteslave.whiteslaveApp.reportSync;
 
-import com.whiteslave.whiteslaveApp.checkReport.domain.dto.CheckReportDto;
+import com.whiteslave.whiteslaveApp.govRequestReport.checkReport.domain.dto.CheckReportDto;
 import com.whiteslave.whiteslaveApp.reportSync.domain.CheckGovResponseReportSync;
 import org.springframework.stereotype.Component;
 
