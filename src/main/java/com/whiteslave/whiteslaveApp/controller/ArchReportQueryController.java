@@ -1,8 +1,8 @@
 package com.whiteslave.whiteslaveApp.controller;
 
 import com.whiteslave.whiteslaveApp.reportSync.domain.enums.ReportType;
-import com.whiteslave.whiteslaveApp.archReportQuery.ArchCheckReportQueryDto;
-import com.whiteslave.whiteslaveApp.archReportQuery.ArchRepotQueryRepository;
+import com.whiteslave.whiteslaveApp.archiveReport.archReportQuery.ArchCheckReportQueryDto;
+import com.whiteslave.whiteslaveApp.archiveReport.archReportQuery.ArchRepotQueryRepository;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

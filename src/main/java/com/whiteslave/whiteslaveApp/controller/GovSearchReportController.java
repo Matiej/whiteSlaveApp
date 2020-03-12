@@ -84,7 +84,7 @@ public class GovSearchReportController {
                                               @RequestParam("date") String date) {
         String prepareSignleValue = checkAndPrepareSignleValue(nip);
         SearchReportDto reportDto = searchReportService.searchByNipAndDate(prepareSignleValue, date);
-        reportSyncService.syncAndSaveSearchReport(reportDto, prepareSignleValue, date);
+        reportSyncService.syncToPDFAndSaveSearchReport(reportDto, prepareSignleValue, date);
         return ResponseEntity.ok().body(reportDto);
     }
 
@@ -106,7 +106,7 @@ public class GovSearchReportController {
     ResponseEntity<Object> searchByNipsAndDate(@RequestParam("nips") String nips, @RequestParam("date") String date) {
         String prepareMultiplePValues = checkAndPrepareMultiplePValues(nips);
         SearchReportDto reportDto = searchReportService.searchByNipsAndDate(prepareMultiplePValues, date);
-        reportSyncService.syncAndSaveSearchReport(reportDto, prepareMultiplePValues, date);
+        reportSyncService.syncToPDFAndSaveSearchReport(reportDto, prepareMultiplePValues, date);
         return ResponseEntity.ok(reportDto);
     }
 
@@ -128,7 +128,7 @@ public class GovSearchReportController {
     ResponseEntity<Object> searchByRegonAndDate(@RequestParam("regon") String regon, @RequestParam("date") String date) {
         String prepareSignleValue = checkAndPrepareSignleValue(regon);
         SearchReportDto reportDto = searchReportService.searchByRegonAndDate(prepareSignleValue, date);
-        reportSyncService.syncAndSaveSearchReport(reportDto, prepareSignleValue, date);
+        reportSyncService.syncToPDFAndSaveSearchReport(reportDto, prepareSignleValue, date);
         return ResponseEntity.ok(reportDto);
     }
 
@@ -138,7 +138,7 @@ public class GovSearchReportController {
             @ApiResponse(code = 200, message = "Search successful"),
             @ApiResponse(code = 400, message = "The request cannot be fulfilled because of wrong syntax"),
             @ApiResponse(code = 404, message = "Server has not found anything matching the requested URI! No users found!"),
-            @ApiResponse(code = 503, message = "Server error. Can't get any requests."),
+            @ApiResponse(code = 503, message = "Data Base server error. Can't get or save any report."),
     })
     @ApiImplicitParams({
             @ApiImplicitParam(required = true, name = "bankAccounts", value = "Up to 30 regon numbers separated by a comma. " +
@@ -150,7 +150,7 @@ public class GovSearchReportController {
     ResponseEntity<Object> searchByRegonsAndDate(@RequestParam String regons, @RequestParam String date) {
         String multiplePValues = checkAndPrepareMultiplePValues(regons);
         SearchReportDto reportDto = searchReportService.searchByRegonsAndDate(multiplePValues, date);
-        reportSyncService.syncAndSaveSearchReport(reportDto, multiplePValues, date);
+        reportSyncService.syncToPDFAndSaveSearchReport(reportDto, multiplePValues, date);
         return ResponseEntity.ok(reportDto);
     }
 

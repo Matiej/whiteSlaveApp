@@ -1,4 +1,4 @@
-package com.whiteslave.whiteslaveApp.reportSync;
+package com.whiteslave.whiteslaveApp.archiveReport;
 
 import com.whiteslave.whiteslaveApp.reportSync.domain.*;
 import com.whiteslave.whiteslaveApp.reportSync.entity.*;
@@ -16,7 +16,6 @@ class ReportSyncRequest2EntityConverter {
         ReportSyncRequestEntity entity = new ReportSyncRequestEntity();
         entity.setRequestDate(reportSyncRequest.getRequestDate());
         entity.setReportDate(reportSyncRequest.getReportDate());
-        entity.setPdfFileName(reportSyncRequest.getPdfFileName());
         entity.setSearchResult(reportSyncRequest.getSearchResult());
         entity.setReportType(reportSyncRequest.getReportType());
         entity.setRequestNip(reportSyncRequest.getRequestNip());
@@ -33,14 +32,14 @@ class ReportSyncRequest2EntityConverter {
         return entity;
     }
 
-    public CheckResponseReportEntity covertCheckGovReportSync2ReportEntity(CheckGovResponseReportSync checkGovReportSync) {
+    private CheckResponseReportEntity covertCheckGovReportSync2ReportEntity(CheckGovResponseReportSync checkGovReportSync) {
         CheckResponseReportEntity entity = new CheckResponseReportEntity();
         entity.setRequestId(checkGovReportSync.getRequestId());
         entity.setAccountAssigned(checkGovReportSync.getAccountAssigned());
         return entity;
     }
 
-    public SearchResponseReportEntity convertSearchGovReportSync2ReportEntity(SearchGovResponseReportSync searchGovResponseReportSync) {
+    private SearchResponseReportEntity convertSearchGovReportSync2ReportEntity(SearchGovResponseReportSync searchGovResponseReportSync) {
         SearchResponseReportEntity entity = new SearchResponseReportEntity();
         entity.setRequestId(searchGovResponseReportSync.getRequestId());
         entity.setSubjectNo(searchGovResponseReportSync.getSubjectResponseList().size());

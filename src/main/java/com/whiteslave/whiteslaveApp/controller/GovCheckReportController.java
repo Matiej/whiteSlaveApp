@@ -44,7 +44,7 @@ public class GovCheckReportController {
         String preparedBankAccount = checkAndPrepareSignleValue(bankAccount);
         String preparedNip = checkAndPrepareSignleValue(nip);
         CheckReportDto checkReportDto = checkReportService.checkByNipAndBankAccoutAndDate(preparedNip, preparedBankAccount, date);
-        reportSyncService.syncAndSaveCheckReport(checkReportDto, preparedNip, preparedBankAccount, date);
+        reportSyncService.syncToPDFAndSaveCheckReport(checkReportDto, preparedNip, preparedBankAccount, date);
         return ResponseEntity.ok(checkReportDto);
     }
 
@@ -70,7 +70,7 @@ public class GovCheckReportController {
         String preparedBankAccount = checkAndPrepareSignleValue(bankAccount);
         String preparedReqgon = checkAndPrepareSignleValue(regon);
         CheckReportDto checkReportDto = checkReportService.checkByRegonAndBankAccoutnAndDate(preparedReqgon, preparedBankAccount, date);
-        reportSyncService.syncAndSaveCheckReport(checkReportDto, preparedBankAccount, preparedReqgon,date);
+        reportSyncService.syncToPDFAndSaveCheckReport(checkReportDto, preparedBankAccount, preparedReqgon,date);
         return ResponseEntity.ok(checkReportDto);
     }
 
