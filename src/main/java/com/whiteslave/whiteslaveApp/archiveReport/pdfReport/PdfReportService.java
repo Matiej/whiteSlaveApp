@@ -1,10 +1,10 @@
 package com.whiteslave.whiteslaveApp.archiveReport.pdfReport;
 
-import be.quodlibet.boxable.*;
-import be.quodlibet.boxable.image.Image;
-import be.quodlibet.boxable.line.LineStyle;
+import be.quodlibet.boxable.BaseTable;
 import com.whiteslave.whiteslaveApp.reportSync.domain.CheckGovResponseReportSync;
+import com.whiteslave.whiteslaveApp.reportSync.domain.GovResponseReportSync;
 import com.whiteslave.whiteslaveApp.reportSync.domain.ReportSyncRequest;
+import com.whiteslave.whiteslaveApp.reportSync.domain.SearchGovResponseReportSync;
 import com.whiteslave.whiteslaveApp.reportSync.domain.enums.ReportType;
 import com.whiteslave.whiteslaveApp.reportSync.domain.enums.SearchResult;
 import lombok.extern.slf4j.Slf4j;
@@ -24,12 +24,13 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.MessageFormat;
-import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Optional;
 
 @Slf4j
 public class PdfReportService {
+
+    private final PdfTableService pdfTableService;
 
     private static final String POSITIVE_REPORT = "POZYTYWNIE";
     private static final String NEGATIVE_REPORT = "NEGATYWNIE";
@@ -45,29 +46,60 @@ public class PdfReportService {
     private static final String LOGO_SZW_IMAGE = System.getProperty("user.dir") + File.separator + "src/main/resources/img/logo_dobra.jpg";
 
     private static final String CHECK_REPORT_TITLE = "Raport z weryfikacji kontrahenta VAT";
-    private static final String SEARCH_REPORT_TITLE = "Raport szczegółowy kontrahenta VAT";
+    private static final String SEARCH_REPORT_TITLE = "Raport szczególowy kontrahenta VAT";
+    private static final String SEARCH_MULTIPLE_REPORTS_TITLE = "Raport szczególowy dla wielu kontrahentów VAT";
 
     private static final String NUMERIC_PAGE_FORMAT = " Strona {0}/{0}";
     private static final String RESPONSE_ID = "ID zapytania: ";
 
+    public PdfReportService(PdfTableService pdfTableService) {
+        this.pdfTableService = pdfTableService;
+    }
+
     public void preparePdfReport(ReportSyncRequest reportSyncRequest) {
-        if (Optional.ofNullable(reportSyncRequest.getGovResponseReportSync()).isPresent()
-                && reportSyncRequest.getGovResponseReportSync() instanceof CheckGovResponseReportSync) {
-            createDir(Path.of(CHECK_FILE_DEST_PATH));
-            File file = new File(CHECK_FILE_DEST_PATH + File.separator + prepareFileName(reportSyncRequest) + FILE_EXT);
-            log.info("FLIE READY: " + file.getPath());
-            try {
-                checkStartPdf(file, CHECK_REPORT_TITLE, reportSyncRequest);
-            } catch (IOException e) {
-                e.printStackTrace();
+        String reportTile = "";
+        File file = null;
+
+        try {
+            if (Optional.ofNullable(reportSyncRequest.getGovResponseReportSync()).isPresent()
+                    && reportSyncRequest.getGovResponseReportSync() instanceof CheckGovResponseReportSync) {
+                reportTile = CHECK_REPORT_TITLE;
+                createDir(Path.of(CHECK_FILE_DEST_PATH));
+                file = new File(CHECK_FILE_DEST_PATH + File.separator + prepareFileName(reportSyncRequest) + FILE_EXT);
+                log.info("FLIE READY: " + file.getPath());
+            } else if (Optional.ofNullable(reportSyncRequest.getGovResponseReportSync()).isPresent()
+                    && reportSyncRequest.getGovResponseReportSync() instanceof SearchGovResponseReportSync) {
+                if (((SearchGovResponseReportSync) reportSyncRequest.getGovResponseReportSync()).getSubjectResponseList().size() > 1) {
+                    reportTile = SEARCH_MULTIPLE_REPORTS_TITLE;
+                } else {
+                    reportTile = SEARCH_REPORT_TITLE;
+                }
+                createDir(Path.of(SEARCH_FILE_DEST_PATH));
+                file = new File(SEARCH_FILE_DEST_PATH + File.separator + prepareFileName(reportSyncRequest) + FILE_EXT);
+                log.info("FLIE READY: " + file.getPath());
+                //todo logowanie jakieś po zrobieniu raporty, metoda zwracać powinna pdf file czy coś kurwa
             }
+            //todo moze zrobic try dla file aby nie null byl czy cos.
+            startGeneratePdf(file, reportTile, reportSyncRequest);
+
+        } catch (IOException e) {
+            String requestID = Optional.ofNullable(reportSyncRequest.getGovResponseReportSync())
+                    .map(GovResponseReportSync::getRequestId)
+                    .orElse("requestID_ERROR");
+            log.error(String.format("ERROR When try to generate %s, request date: %s, responseID: %s", reportTile, reportSyncRequest.getRequestDate().toString(), requestID), e);
+            e.printStackTrace();
         }
+
     }
 
     private String prepareFileName(ReportSyncRequest reportSyncRequest) {
         String reportDate = reportSyncRequest.getReportDate().toString();
         String reportTypeName = reportSyncRequest.getReportType().equals(ReportType.CHECK) ? CHECK_REPORT_FILE_NAME : SEARCH_REPORT_FILE_NAME;
-        String param = Optional.ofNullable(reportSyncRequest.getRequestNip()).orElse(reportSyncRequest.getRequestRegon());
+        String param = Optional.of(reportSyncRequest)
+                .map(ReportSyncRequest::getRequestNip)
+                .or(() -> Optional.ofNullable(reportSyncRequest.getRequestRegon()))
+                .or(() -> Optional.ofNullable(reportSyncRequest.getRequestBankAccount()))
+                .orElseThrow(() -> new RuntimeException("NO PARAM TO BUILD FILE NAME PROVIDED"));
         String reportResult = reportSyncRequest.getSearchResult().equals(SearchResult.NEGATIVE) ? "NEGATYWNY" : "POZYTYWNY";
         String reqDate = reportSyncRequest.getRequestDate().toString().replaceAll(":", "-");
         String sep = "_";
@@ -83,7 +115,7 @@ public class PdfReportService {
                 .toString();
     }
 
-    private void checkStartPdf(File file, String title, ReportSyncRequest reportSyncRequest) throws IOException {
+    private void startGeneratePdf(File file, String title, ReportSyncRequest reportSyncRequest) throws IOException {
         PDDocument document = new PDDocument();
         pdfDocProperites(document);
 
@@ -146,12 +178,17 @@ public class PdfReportService {
         contentStream.closeAndStroke();
 
         //table
-        prepareTable(page, document, yCurrentPosition = (yCurrentPosition - 10f), reportSyncRequest).draw();
+        String tableResultImage = SearchResult.NEGATIVE.name().equals(reportSyncRequest.getSearchResult().name()) ? NEGATIVE_REPORT_IMAGE : POSITIVE_REPORT_IMAGE;
+        BufferedImage image = prepareImage(document, tableResultImage).getImage();
+        BaseTable baseTable = pdfTableService.prepareTable(page, document, yCurrentPosition = (yCurrentPosition - 10f), reportSyncRequest, image);
+        baseTable.draw();
+//        prepareTable(page, document, yCurrentPosition = (yCurrentPosition - 10f), reportSyncRequest,image).draw();
         contentStream.close();
 
         //add pages numbers
         String footerPageNumeric = "|" + RESPONSE_ID.concat(reportSyncRequest.getGovResponseReportSync().getRequestId()) + "|" + NUMERIC_PAGE_FORMAT;
         addPageNumbers(document, footerPageNumeric, xNumbericPagePosition, yNumbericPagePosition);
+
         //save and close doc
         document.save(file);
         document.close();
@@ -178,136 +215,6 @@ public class PdfReportService {
             e.printStackTrace();
         }
         return img;
-    }
-
-    //todo tutaj mają przyjść parametry lub mapa parametrów z tekstem, czy negatywny ze zdjęciem itp .
-    private BaseTable prepareTable(PDPage page, PDDocument document, float yLastPos, ReportSyncRequest reportSyncRequest) throws IOException {
-        final String reportVerResult = SearchResult.NEGATIVE.name().equals(reportSyncRequest.getSearchResult().name()) ? NEGATIVE_REPORT : POSITIVE_REPORT;
-        float margin = 50;
-        float yStartNewPage = page.getMediaBox().getHeight() - 100; //2xmargin
-        float tableWidth = page.getMediaBox().getWidth() - 100;
-
-        boolean drawContent = true;
-        float bottomMargin = 70;
-
-        BaseTable table = new BaseTable(yLastPos, yStartNewPage,
-                bottomMargin, tableWidth, margin, document, page, true, drawContent);
-
-        //-> first table row + image positive/negative
-        // the parameter is the row height
-        Row<PDPage> headerRow = table.createRow(20);
-        // the first parameter is the cell width
-        Cell<PDPage> cell = headerRow.createCell(90, "Kontrahent zweryfikowany " + reportVerResult);
-        cell.setFont(PDType1Font.HELVETICA_BOLD);
-        cell.setFontSize(18);
-        // vertical alignment
-        cell.setValign(VerticalAlignment.MIDDLE);
-        // border style
-        cell.setTopBorderStyle(new LineStyle(Color.GRAY, 3));
-        cell.setBottomBorderStyle(new LineStyle(Color.GRAY, 3));
-        //image for first table title row
-        String tableResultImage = SearchResult.NEGATIVE.name().equals(reportSyncRequest.getSearchResult().name()) ? NEGATIVE_REPORT_IMAGE : POSITIVE_REPORT_IMAGE;
-        BufferedImage image = prepareImage(document, tableResultImage).getImage();
-        be.quodlibet.boxable.image.Image statusImg = new Image(image);
-        cell = headerRow.createImageCell(10, statusImg, HorizontalAlignment.CENTER, VerticalAlignment.MIDDLE);
-        cell.setTopBorderStyle(new LineStyle(Color.GRAY, 3));
-        cell.setBottomBorderStyle(new LineStyle(Color.GRAY, 3));
-        table.addHeaderRow(headerRow);
-
-        //header row for request params
-        Row<PDPage> smallHeaderRow1 = table.createRow(16);
-        cell = smallHeaderRow1.createCell(100,"PRZEKAZANE PARAMETRY ZAPYTANIA");
-        cell.setValign(VerticalAlignment.MIDDLE);
-        cell.setBottomBorderStyle(new LineStyle(Color.GRAY, 3));
-        cell.setFontSize(15);
-        cell.setFont(PDType1Font.COURIER);
-        cell.setAlign(HorizontalAlignment.CENTER);
-        table.addHeaderRow(smallHeaderRow1);
-
-        //request paramas
-        String firstParamName = Optional.ofNullable(reportSyncRequest.getRequestNip()).isPresent() ? "NIP" : "REGON";
-        String firstParam = Optional.ofNullable(reportSyncRequest.getRequestNip()).isPresent() ? reportSyncRequest.getRequestNip() : reportSyncRequest.getRequestRegon();
-        String secondParamName = "NUMER KONTA BANKOWEGO";
-        String secondParam = reportSyncRequest.getRequestBankAccount();
-        String firstParamCell = firstParamName + ": " + firstParam;
-        String secondParamCell = secondParamName + ": " + secondParam;
-
-        Row<PDPage> row = table.createRow(20);
-        cell = row.createCell(40, firstParamCell);
-        cell.setFont(PDType1Font.COURIER);
-        cell.setAlign(HorizontalAlignment.LEFT);
-        cell.setValign(VerticalAlignment.MIDDLE);
-        cell.setLineSpacing(2);
-        cell.setFontSize(12);
-        cell = row.createCell(60, secondParamCell);
-        cell.setFont(PDType1Font.COURIER);
-        cell.setAlign(HorizontalAlignment.LEFT);
-        cell.setValign(VerticalAlignment.MIDDLE);
-        cell.setLineSpacing(2);
-        cell.setFontSize(12);
-
-        String formatedRequestDate = DateTimeFormatter.ofPattern("yyyy-MM-dd|HH:mm:ss").format(reportSyncRequest.getRequestDate().withNano(0));
-        String requestDateParam = "DATA ZAPYTANIA: ".concat(formatedRequestDate);
-        String reportType = ReportType.CHECK.name().equals(reportSyncRequest.getReportType().name()) ? "SZYBKA_WERYFIKACJA" : "RAPORT_SZCZEGÓLOWY";
-        String reportTypeParam = "TYP RAPORTU: ".concat(reportType);
-
-        row = table.createRow(20);
-        cell = row.createCell(40, reportTypeParam);
-        cell.setFont(PDType1Font.COURIER);
-        cell.setAlign(HorizontalAlignment.LEFT);
-        cell.setValign(VerticalAlignment.MIDDLE);
-        cell.setLineSpacing(2);
-        cell.setFontSize(12);
-        cell = row.createCell(60, requestDateParam);
-        cell.setFont(PDType1Font.COURIER);
-        cell.setAlign(HorizontalAlignment.LEFT);
-        cell.setValign(VerticalAlignment.MIDDLE);
-        cell.setLineSpacing(2);
-        cell.setFontSize(12);
-
-
-        if(0>1) {
-//            Row<PDPage> row = table.createRow(16);
-            cell = row.createCell(30, "Kontrahent: ");
-            cell.setFontSize(14);
-            cell.setAlign(HorizontalAlignment.LEFT);
-            cell = row.createCell(70, "black left bold");
-            cell.setFontSize(14);
-            cell.setFont(PDType1Font.HELVETICA_BOLD);
-
-            row = table.createRow(20);
-            cell = row.createCell(50, "red right mono");
-            cell.setTextColor(Color.RED);
-            cell.setFontSize(15);
-            cell.setFont(PDType1Font.COURIER);
-            // horizontal alignment
-            cell.setAlign(HorizontalAlignment.RIGHT);
-            cell.setBottomBorderStyle(new LineStyle(Color.RED, 5));
-            cell = row.createCell(50, "green centered italic");
-            cell.setTextColor(Color.GREEN);
-            cell.setFontSize(15);
-            cell.setFont(PDType1Font.TIMES_ITALIC);
-            cell.setAlign(HorizontalAlignment.CENTER);
-            cell.setBottomBorderStyle(new LineStyle(Color.GREEN, 5));
-
-            row = table.createRow(20);
-            cell = row.createCell(40, "rotated");
-            cell.setFontSize(15);
-            // rotate the text
-            cell.setTextRotated(true);
-            cell.setAlign(HorizontalAlignment.RIGHT);
-            cell.setValign(VerticalAlignment.MIDDLE);
-            // long text that wraps
-            cell = row.createCell(30, "long text long text long text long text long text long text long text");
-            cell.setFontSize(12);
-            // long text that wraps, with more line spacing
-            cell = row.createCell(30, "long text long text long text long text long text long text long text");
-            cell.setFontSize(12);
-            cell.setLineSpacing(2);
-        }
-
-        return table;
-
     }
 
     private void pdfDocProperites(PDDocument document) {
