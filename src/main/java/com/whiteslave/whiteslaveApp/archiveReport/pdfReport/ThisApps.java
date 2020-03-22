@@ -3,58 +3,51 @@ package com.whiteslave.whiteslaveApp.archiveReport.pdfReport;
 import com.whiteslave.whiteslaveApp.reportSync.domain.*;
 import com.whiteslave.whiteslaveApp.reportSync.domain.enums.ReportType;
 import com.whiteslave.whiteslaveApp.reportSync.domain.enums.SearchResult;
+import org.apache.fontbox.ttf.TrueTypeFont;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.font.PDFont;
+import org.apache.pdfbox.pdmodel.font.PDTrueTypeFont;
+import org.apache.pdfbox.pdmodel.font.PDType0Font;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
 
+import java.io.File;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class ThisApps {
 
-    public static void main(String[] args) {
-        GovResponseReportSync res = new CheckGovResponseReportSync("sdqwsr41211000", "TAK");
+    public static void main(String[] args) throws IOException {
 
+        PDDocument document = new PDDocument();
+        PDPage page = new PDPage();
+        document.addPage( page );
+        String text = "zażółcić gęślą jaźń";
+        PDFont font = PDType1Font.SYMBOL;
+//        PDType0Font font1 = PDType0Font.load(document, new File("c:/windows/fonts/arial.ttf"));
+        PDType0Font font1 = PDType0Font.load(document, new ThisApps().getfile());
+//        PDFont font = new PDType1AfmPfbFont(doc,"cfm.afm");
+        PDPageContentStream contentStream = new PDPageContentStream(document, page);
+        contentStream.beginText();
+        contentStream.setFont( font1, 12 );
+        contentStream.moveTextPositionByAmount( 100, 700 );
+        contentStream.drawString( text );
+        contentStream.endText();
 
-        SubjectResponse s1 = SubjectResponse.builder()
-                .name("DIMU SPÓLKA Z OGRANICZONA ODPOWIEDZIALNOSCIA")
-                .residenceAddress("ul. Chlopickiego 48, 05-080 Izabelin")
-                .statusVat("Czynny")
-                .nip("1181481416")
-                .regon("00000011112222")
-                .krs("001464655")
-                .registrationLegalDate(LocalDate.of(1979,7,25))
-                .hasVirtualAccounts(false)
-                .build();
+// Make sure that the content stream is closed:
+        contentStream.close();
 
+// Save the results and ensure that the document is properly closed:
+        document.save( "Hello World.pdf");
+        document.close();
+    }
 
-        GovResponseReportSync searchRes = new SearchGovResponseReportSync("search41211000", List.of(s1, s1));
-
-        ReportSyncRequest r = ReportSyncRequest.builder()
-                .requestDate(LocalDateTime.now().withNano(0))
-                .reportDate(LocalDate.now())
-                .searchResult(SearchResult.POSITIVE)
-                .reportType(ReportType.CHECK)
-                .requestNip("111811818")
-//                .requestRegon("012442100")
-                .requestBankAccount("1231231232168954564454645645")
-                .govResponseReportSync(res)
-                .build();
-
-        ReportSyncRequest searchRequest = ReportSyncRequest.builder()
-                .requestDate(LocalDateTime.now().withNano(0))
-                .reportDate(LocalDate.now())
-                .searchResult(SearchResult.POSITIVE)
-                .reportType(ReportType.SEARCH)
-//                .requestNip("")
-//                .requestRegon("012442100,00000011112222,21412412412,1241243532523")
-                .requestRegon("00000011112222, 00000011112222")
-//                .requestBankAccount("1231231232168954564454645645")
-                .govResponseReportSync(searchRes)
-                .build();
-
-        PdfReportService p = new PdfReportService(new PdfTableService());
-//        p.preparePdfReport(r);
-        p.preparePdfReport(searchRequest);
-
-
+    private  File getfile() {
+        return new File(Objects.requireNonNull(getClass().getClassLoader().getResource("arial.ttf")).getFile());
     }
 }

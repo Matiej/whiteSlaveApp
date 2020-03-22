@@ -3,24 +3,21 @@ package com.whiteslave.whiteslaveApp.archiveReport.pdfReport;
 import be.quodlibet.boxable.*;
 import be.quodlibet.boxable.image.Image;
 import be.quodlibet.boxable.line.LineStyle;
-import com.whiteslave.whiteslaveApp.reportSync.domain.CheckGovResponseReportSync;
-import com.whiteslave.whiteslaveApp.reportSync.domain.ReportSyncRequest;
-import com.whiteslave.whiteslaveApp.reportSync.domain.SearchGovResponseReportSync;
-import com.whiteslave.whiteslaveApp.reportSync.domain.SubjectResponse;
+import com.whiteslave.whiteslaveApp.reportSync.domain.*;
 import com.whiteslave.whiteslaveApp.reportSync.domain.enums.ReportType;
 import com.whiteslave.whiteslaveApp.reportSync.domain.enums.SearchResult;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.font.PDType0Font;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 class PdfTableService {
@@ -39,8 +36,24 @@ class PdfTableService {
         boolean drawContent = true;
         float bottomMargin = 70;
 
+        PDType0Font polishFont = PDType0Font.load(document, new File(Objects.requireNonNull(getClass().getClassLoader().getResource("arial.ttf")).getFile()));
+
         BaseTable table = new BaseTable(yLastPos, yStartNewPage,
                 bottomMargin, tableWidth, margin, document, page, true, drawContent);
+
+        prepareTableHeader(table, image, reportVerResult);
+        prepareTableRequest(table, reportSyncRequest,polishFont);
+
+        //response header
+        if (null != reportSyncRequest.getGovResponseReportSync() && reportSyncRequest.getGovResponseReportSync() instanceof CheckGovResponseReportSync) {
+            prepareTableCheckResponse(table, reportSyncRequest, polishFont);
+        } else if (null != reportSyncRequest.getGovResponseReportSync() && reportSyncRequest.getGovResponseReportSync() instanceof SearchGovResponseReportSync) {
+            prepareTableSearchResponse(table, reportSyncRequest, polishFont);
+        }
+        return table;
+    }
+
+    private void prepareTableHeader(BaseTable table, BufferedImage image, String reportVerResult) {
 
         //-> first table row + image positive/negative
         // the parameter is the row height
@@ -61,33 +74,35 @@ class PdfTableService {
         cell.setBottomBorderStyle(new LineStyle(Color.GRAY, 3));
         table.addHeaderRow(headerRow);
 
+    }
+
+    private void prepareTableRequest(BaseTable table, ReportSyncRequest reportSyncRequest, PDType0Font polishFont) {
         //header row for request params
-        Row<PDPage> smallHeaderRequestRow = table.createRow(16);
-        cell = smallHeaderRequestRow.createCell(100, "PRZEKAZANE PARAMETRY ZAPYTANIA");
+        Row<PDPage> row = table.createRow(16);
+        Cell<PDPage> cell = row.createCell(100, "PRZEKAZANE PARAMETRY ZAPYTANIA");
         cell.setValign(VerticalAlignment.MIDDLE);
         cell.setBottomBorderStyle(new LineStyle(Color.GRAY, 3));
         cell.setFontSize(15);
-        cell.setFont(PDType1Font.COURIER);
+        cell.setFont(polishFont);
         cell.setAlign(HorizontalAlignment.CENTER);
-        table.addHeaderRow(smallHeaderRequestRow);
 
         //request paramas
         String firstParamName = Optional.ofNullable(reportSyncRequest.getRequestNip()).isPresent() ? "NIP" : "REGON";
         String firstParam = Optional.ofNullable(reportSyncRequest.getRequestNip()).isPresent() ? reportSyncRequest.getRequestNip() : reportSyncRequest.getRequestRegon();
         String secondParamName = "NUMER KONTA BANKOWEGO";
-        String secondParam = Optional.ofNullable(reportSyncRequest).map(ReportSyncRequest::getRequestBankAccount).orElse("NIE WYKORZYSTANY");
+        String secondParam = Optional.of(reportSyncRequest).map(ReportSyncRequest::getRequestBankAccount).orElse("NIE WYKORZYSTANY");
         String firstParamCell = firstParamName + ": " + firstParam;
         String secondParamCell = secondParamName + ": " + secondParam;
 
-        Row<PDPage> row = table.createRow(20);
+        row = table.createRow(20);
         cell = row.createCell(40, firstParamCell);
-        cell.setFont(PDType1Font.COURIER);
+        cell.setFont(polishFont);
         cell.setAlign(HorizontalAlignment.LEFT);
         cell.setValign(VerticalAlignment.MIDDLE);
         cell.setLineSpacing(2);
         cell.setFontSize(12);
         cell = row.createCell(60, secondParamCell);
-        cell.setFont(PDType1Font.COURIER);
+        cell.setFont(polishFont);
         cell.setAlign(HorizontalAlignment.LEFT);
         cell.setValign(VerticalAlignment.MIDDLE);
         cell.setLineSpacing(2);
@@ -100,206 +115,23 @@ class PdfTableService {
 
         row = table.createRow(20);
         cell = row.createCell(40, reportTypeParam);
-        cell.setFont(PDType1Font.COURIER);
+        cell.setFont(polishFont);
         cell.setAlign(HorizontalAlignment.LEFT);
         cell.setValign(VerticalAlignment.MIDDLE);
         cell.setLineSpacing(2);
         cell.setFontSize(12);
         cell.setBottomBorderStyle(new LineStyle(Color.GRAY, 3));
         cell = row.createCell(60, requestDateParam);
-        cell.setFont(PDType1Font.COURIER);
+        cell.setFont(polishFont);
         cell.setAlign(HorizontalAlignment.LEFT);
         cell.setValign(VerticalAlignment.MIDDLE);
         cell.setLineSpacing(2);
         cell.setFontSize(12);
         cell.setBottomBorderStyle(new LineStyle(Color.GRAY, 3));
 
-        //response header
-        if (null != reportSyncRequest.getGovResponseReportSync() && reportSyncRequest.getGovResponseReportSync() instanceof CheckGovResponseReportSync) {
-            prepareTableCheckResponse(table, reportSyncRequest);
-        } else if (null != reportSyncRequest.getGovResponseReportSync() && reportSyncRequest.getGovResponseReportSync() instanceof SearchGovResponseReportSync) {
-            prepareTableSearchResponse(table, reportSyncRequest);
-        }
-
-        if (0 > 1) {
-//            Row<PDPage> row = table.createRow(16);
-            cell = row.createCell(30, "Kontrahent: ");
-            cell.setFontSize(14);
-            cell.setAlign(HorizontalAlignment.LEFT);
-            cell = row.createCell(70, "black left bold");
-            cell.setFontSize(14);
-            cell.setFont(PDType1Font.HELVETICA_BOLD);
-
-            row = table.createRow(20);
-            cell = row.createCell(50, "red right mono");
-            cell.setTextColor(Color.RED);
-            cell.setFontSize(15);
-            cell.setFont(PDType1Font.COURIER);
-            // horizontal alignment
-            cell.setAlign(HorizontalAlignment.RIGHT);
-            cell.setBottomBorderStyle(new LineStyle(Color.RED, 5));
-            cell = row.createCell(50, "green centered italic");
-            cell.setTextColor(Color.GREEN);
-            cell.setFontSize(15);
-            cell.setFont(PDType1Font.TIMES_ITALIC);
-            cell.setAlign(HorizontalAlignment.CENTER);
-            cell.setBottomBorderStyle(new LineStyle(Color.GREEN, 5));
-
-            row = table.createRow(20);
-            cell = row.createCell(40, "rotated");
-            cell.setFontSize(15);
-            // rotate the text
-            cell.setTextRotated(true);
-            cell.setAlign(HorizontalAlignment.RIGHT);
-            cell.setValign(VerticalAlignment.MIDDLE);
-            // long text that wraps
-            cell = row.createCell(30, "long text long text long text long text long text long text long text");
-            cell.setFontSize(12);
-            // long text that wraps, with more line spacing
-            cell = row.createCell(30, "long text long text long text long text long text long text long text");
-            cell.setFontSize(12);
-            cell.setLineSpacing(2);
-        }
-
-        return table;
-
     }
 
-    private void prepareTableSearchResponse(BaseTable table, ReportSyncRequest reportSyncRequest) {
-        SearchGovResponseReportSync govResponseReportSync = (SearchGovResponseReportSync) reportSyncRequest.getGovResponseReportSync();
-        String reposneIdContent = String.format("Identyfikator zapytania: %s", govResponseReportSync.getRequestId());
-        String veryficationDate = String.format("Weryfikacja na dzien: %s", reportSyncRequest.getReportDate().toString());
-
-        Integer subjectReponseNumber = Optional.ofNullable(govResponseReportSync.getSubjectResponseList()).map(List::size).orElse(0);
-        //todo parametry, dla ktorych nie znaleziono wynikow
-        if (subjectReponseNumber > 0) {
-
-            if (subjectReponseNumber > 1) {
-                String paramsInfo = prepareEmptyParamsInfo(reportSyncRequest, govResponseReportSync.getSubjectResponseList());
-                if(!paramsInfo.isEmpty()) {
-                    String nonMatechParamsCell = String.format("Zapytania bez wyników: %s", paramsInfo);
-                    Row<PDPage> row = table.createRow(20);
-                    Cell<PDPage> cell = row.createCell(100, nonMatechParamsCell);
-                    cell.setFont(PDType1Font.TIMES_ROMAN);
-                    cell.setAlign(HorizontalAlignment.LEFT);
-                    cell.setValign(VerticalAlignment.MIDDLE);
-                    cell.setTextColor(Color.RED);
-                    cell.setLineSpacing(2);
-                    cell.setFontSize(12);
-                }
-            }
-
-            govResponseReportSync.getSubjectResponseList().forEach(subject -> {
-                String statusVAT = String.format("Status podatnik VAT: %s", subject.getStatusVat());
-
-                prepareTableResponseHeader(table);
-                prepareSearchResponseFirstLine(table, reposneIdContent, veryficationDate, statusVAT);
-
-                //prepare search subject response BASIC rows
-                // company name
-                String companyName = String.format("Nazwa: %s", contentOptionalChecker(subject.getName()));
-                Row<PDPage> row = table.createRow(20);
-                Cell<PDPage> cell = row.createCell(100, companyName);
-                cell.setFont(PDType1Font.TIMES_ROMAN);
-                cell.setAlign(HorizontalAlignment.LEFT);
-                cell.setValign(VerticalAlignment.MIDDLE);
-                cell.setLineSpacing(2);
-                cell.setFontSize(12);
-
-                //company address
-                String companyAdressName = String.format("Adres prowadzenia dzialalnosci: %s", contentOptionalChecker(subject.getResidenceAddress()));
-                row = table.createRow(20);
-                cell = row.createCell(100, companyAdressName);
-                cell.setFont(PDType1Font.TIMES_ROMAN);
-                cell.setAlign(HorizontalAlignment.LEFT);
-                cell.setValign(VerticalAlignment.MIDDLE);
-                cell.setLineSpacing(2);
-                cell.setFontSize(12);
-
-                //company working address
-                String companyWorkingAddress = String.format("Adres siedziby: %s", contentOptionalChecker(subject.getWorkingAddress()));
-                row = table.createRow(20);
-                cell = row.createCell(100, companyWorkingAddress);
-                cell.setFont(PDType1Font.TIMES_ROMAN);
-                cell.setAlign(HorizontalAlignment.LEFT);
-                cell.setValign(VerticalAlignment.MIDDLE);
-                cell.setLineSpacing(2);
-                cell.setFontSize(12);
-
-                //nip-regon-krs
-                String nip = String.format("NIP: %s", contentOptionalChecker(subject.getNip()));
-                String regon = String.format("REGON: %s", contentOptionalChecker(subject.getRegon()));
-                String krs = String.format("KRS: %s", contentOptionalChecker(subject.getKrs()));
-                row = table.createRow(20);
-                cell = row.createCell(34, nip);
-                cell.setFont(PDType1Font.TIMES_ROMAN);
-                cell.setAlign(HorizontalAlignment.LEFT);
-                cell.setValign(VerticalAlignment.MIDDLE);
-                cell.setLineSpacing(2);
-                cell.setFontSize(12);
-                cell = row.createCell(33, regon);
-                cell.setFont(PDType1Font.TIMES_ROMAN);
-                cell.setAlign(HorizontalAlignment.LEFT);
-                cell.setValign(VerticalAlignment.MIDDLE);
-                cell.setLineSpacing(2);
-                cell.setFontSize(12);
-                cell = row.createCell(33, krs);
-                cell.setFont(PDType1Font.TIMES_ROMAN);
-                cell.setAlign(HorizontalAlignment.LEFT);
-                cell.setValign(VerticalAlignment.MIDDLE);
-                cell.setLineSpacing(2);
-                cell.setFontSize(12);
-
-                //pesel-registerDate-virtualAccout
-                String pesel = String.format("PESEL: %s", contentOptionalChecker(subject.getPesel()));
-                String registerDate = String.format("Data rejestracji VAT: %s", contentOptionalChecker(subject.getRegistrationLegalDate().toString()));
-                String virtualAccount = String.format("Konto wirutalne: %s", Optional.ofNullable(subject.getHasVirtualAccounts()).map(t -> t ? "TAK" : "NIE").orElse(BRAK_DANYCH));
-                row = table.createRow(20);
-                cell = row.createCell(30, pesel);
-                cell.setFont(PDType1Font.TIMES_ROMAN);
-                cell.setAlign(HorizontalAlignment.LEFT);
-                cell.setValign(VerticalAlignment.MIDDLE);
-                cell.setLineSpacing(2);
-                cell.setFontSize(12);
-                cell = row.createCell(40, registerDate);
-                cell.setFont(PDType1Font.TIMES_ROMAN);
-                cell.setAlign(HorizontalAlignment.LEFT);
-                cell.setValign(VerticalAlignment.MIDDLE);
-                cell.setLineSpacing(2);
-                cell.setFontSize(12);
-                cell = row.createCell(30, virtualAccount);
-                cell.setFont(PDType1Font.TIMES_ROMAN);
-                cell.setAlign(HorizontalAlignment.LEFT);
-                cell.setValign(VerticalAlignment.MIDDLE);
-                cell.setLineSpacing(2);
-                cell.setFontSize(12);
-
-            });
-        } else {
-            prepareTableResponseHeader(table);
-            prepareSearchResponseFirstLine(table, reposneIdContent, veryficationDate, "BRAK DANYCH VAT");
-        }
-    }
-
-    private String prepareEmptyParamsInfo(ReportSyncRequest reportSyncRequest, List<SubjectResponse> subjectResponseList) {
-        SearchGovResponseReportSync govResponseReportSync = (SearchGovResponseReportSync) reportSyncRequest.getGovResponseReportSync();
-        List<String> multipleParams = Arrays.asList(Optional.ofNullable(reportSyncRequest.getRequestNip()).map(n-> n.split(","))
-                .or(()->Optional.ofNullable(reportSyncRequest.getRequestRegon()).map(r-> r.split(",")))
-                .or(()->Optional.ofNullable(reportSyncRequest.getRequestBankAccount()).map(b-> b.split(",")))
-                .orElseThrow(()-> new RuntimeException("NO PARAMS FOUND")));
-        //todo jakis exception swoj zrobic czy cos
-
-        String nonMatechParams = multipleParams.stream()
-                .map(String::trim)
-                .filter(p -> subjectResponseList.stream().map(SubjectResponse::getNip).noneMatch(p::equals))
-                .filter(p -> subjectResponseList.stream().map(SubjectResponse::getRegon).noneMatch(p::equals))
-                .filter(p -> subjectResponseList.stream().map(resp -> Optional.ofNullable(resp.getAccountNumbersList()).orElse(new ArrayList<>())).noneMatch(list -> list.contains(p)))
-                .collect(Collectors.joining(","));
-
-        return  nonMatechParams;
-    }
-
-    private void prepareTableCheckResponse(BaseTable table, ReportSyncRequest reportSyncRequest) {
+    private void prepareTableCheckResponse(BaseTable table, ReportSyncRequest reportSyncRequest ,  PDType0Font polishFont) {
 
         CheckGovResponseReportSync govResponseReportSync = (CheckGovResponseReportSync) reportSyncRequest.getGovResponseReportSync();
         String reposneIdContent = String.format("Identyfikator zapytania: %s", govResponseReportSync.getRequestId());
@@ -311,7 +143,7 @@ class PdfTableService {
 
         Row<PDPage> row = table.createRow(20);
         Cell<PDPage> cell = row.createCell(30, reposneIdContent);
-        cell.setFont(PDType1Font.TIMES_BOLD);
+        cell.setFont(polishFont);
         cell.setAlign(HorizontalAlignment.LEFT);
         cell.setValign(VerticalAlignment.MIDDLE);
         cell.setFillColor(Color.YELLOW);
@@ -325,17 +157,200 @@ class PdfTableService {
             cell.setTextColor(Color.RED);
         }
 
-        cell.setFont(PDType1Font.TIMES_ITALIC);
+        cell.setFont(polishFont);
         cell.setAlign(HorizontalAlignment.LEFT);
         cell.setValign(VerticalAlignment.MIDDLE);
         cell.setLineSpacing(2);
         cell.setFontSize(12);
         cell = row.createCell(40, veryficationDate);
-        cell.setFont(PDType1Font.TIMES_ROMAN);
+        cell.setFont(polishFont);
         cell.setAlign(HorizontalAlignment.LEFT);
         cell.setValign(VerticalAlignment.MIDDLE);
         cell.setLineSpacing(2);
         cell.setFontSize(12);
+    }
+
+    private void prepareTableSearchResponse(BaseTable table, ReportSyncRequest reportSyncRequest,  PDType0Font polishFont) {
+        SearchGovResponseReportSync govResponseReportSync = (SearchGovResponseReportSync) reportSyncRequest.getGovResponseReportSync();
+        String reposneIdContent = String.format("Identyfikator zapytania: %s", govResponseReportSync.getRequestId());
+        String veryficationDate = String.format("Weryfikacja na dzien: %s", reportSyncRequest.getReportDate().toString());
+
+        Integer subjectReponseNumber = Optional.ofNullable(govResponseReportSync.getSubjectResponseList()).map(List::size).orElse(0);
+        if (subjectReponseNumber > 0) {
+
+            String paramsInfo = prepareEmptyParamsInfo(reportSyncRequest, govResponseReportSync.getSubjectResponseList());
+            if (!paramsInfo.isEmpty()) {
+                String nonMatechParamsCell = String.format("Zapytania bez wyników: %s", paramsInfo);
+                Row<PDPage> row = table.createRow(20);
+                Cell<PDPage> cell = row.createCell(100, nonMatechParamsCell);
+                cell.setFont(polishFont);
+                cell.setAlign(HorizontalAlignment.LEFT);
+                cell.setValign(VerticalAlignment.MIDDLE);
+                cell.setTextColor(Color.RED);
+                cell.setLineSpacing(2);
+                cell.setFontSize(12);
+            }
+
+            govResponseReportSync.getSubjectResponseList().forEach(subject -> {
+                String statusVAT = String.format("Status podatnik VAT: %s", subject.getStatusVat());
+
+                prepareTableResponseHeader(table);
+                prepareSearchResponseFirstLine(table, reposneIdContent, veryficationDate, statusVAT);
+
+                //prepare search subject response BASIC rows
+                // company name
+                String companyName = String.format("Nazwa: %s", contentOptionalChecker(subject.getName()));
+                Row<PDPage> row = table.createRow(20);
+                Cell<PDPage> cell = row.createCell(100, companyName);
+                cell.setFont(polishFont);
+                cell.setAlign(HorizontalAlignment.LEFT);
+                cell.setValign(VerticalAlignment.MIDDLE);
+                cell.setLineSpacing(2);
+                cell.setFontSize(12);
+
+                //company address
+                String companyAdressName = String.format("Adres prowadzenia działalnośsci  albo adres miejsca zamieszkania, " +
+                        "w przypadku braku adresu stałego miejsca prowadzenia działalności " +
+                        "- w odniesieniu do osoby fizycznej: %s", contentOptionalChecker(subject.getResidenceAddress()));
+                row = table.createRow(20);
+                cell = row.createCell(100, companyAdressName);
+                cell.setFont(polishFont);
+                cell.setAlign(HorizontalAlignment.LEFT);
+                cell.setValign(VerticalAlignment.MIDDLE);
+                cell.setLineSpacing(2);
+                cell.setFontSize(12);
+
+                //company working address
+                String companyWorkingAddress = String.format("Adres siedziby w przypadku podmiotu niebędącego osobą fizyczną: %s", contentOptionalChecker(subject.getWorkingAddress()));
+                row = table.createRow(20);
+                cell = row.createCell(100, companyWorkingAddress);
+                cell.setFont(polishFont);
+                cell.setAlign(HorizontalAlignment.LEFT);
+                cell.setValign(VerticalAlignment.MIDDLE);
+                cell.setLineSpacing(2);
+                cell.setFontSize(12);
+
+                //nip-regon-krs
+                String nip = String.format("NIP: %s", contentOptionalChecker(subject.getNip()));
+                String regon = String.format("REGON: %s", contentOptionalChecker(subject.getRegon()));
+                String krs = String.format("KRS: %s", contentOptionalChecker(subject.getKrs()));
+                row = table.createRow(20);
+                cell = row.createCell(34, nip);
+                cell.setFont(polishFont);
+                cell.setAlign(HorizontalAlignment.LEFT);
+                cell.setValign(VerticalAlignment.MIDDLE);
+                cell.setLineSpacing(2);
+                cell.setFontSize(12);
+                cell = row.createCell(33, regon);
+                cell.setFont(polishFont);
+                cell.setAlign(HorizontalAlignment.LEFT);
+                cell.setValign(VerticalAlignment.MIDDLE);
+                cell.setLineSpacing(2);
+                cell.setFontSize(12);
+                cell = row.createCell(33, krs);
+                cell.setFont(polishFont);
+                cell.setAlign(HorizontalAlignment.LEFT);
+                cell.setValign(VerticalAlignment.MIDDLE);
+                cell.setLineSpacing(2);
+                cell.setFontSize(12);
+
+                //pesel-registerDate-virtualAccout
+                String pesel = String.format("PESEL: %s", contentOptionalChecker(subject.getPesel()));
+                String registerDate = String.format("Data rejestracji VAT: %s", contentOptionalChecker(subject.getRegistrationLegalDate().toString()));
+                String virtualAccount = String.format("Konto wirutalne: %s", Optional.ofNullable(subject.getHasVirtualAccounts()).map(t -> t ? "TAK" : "NIE").orElse(BRAK_DANYCH));
+                row = table.createRow(20);
+                cell = row.createCell(30, pesel);
+                cell.setFont(polishFont);
+                cell.setAlign(HorizontalAlignment.LEFT);
+                cell.setValign(VerticalAlignment.MIDDLE);
+                cell.setLineSpacing(2);
+                cell.setFontSize(12);
+                cell = row.createCell(40, registerDate);
+                cell.setFont(polishFont);
+                cell.setAlign(HorizontalAlignment.LEFT);
+                cell.setValign(VerticalAlignment.MIDDLE);
+                cell.setLineSpacing(2);
+                cell.setFontSize(12);
+                cell = row.createCell(30, virtualAccount);
+                cell.setFont(polishFont);
+                cell.setAlign(HorizontalAlignment.LEFT);
+                cell.setValign(VerticalAlignment.MIDDLE);
+                cell.setLineSpacing(2);
+                cell.setFontSize(12);
+
+                //bank accounts
+                //todo podzielic numery kont. Jak wiecej na stronie jak 16 par to generowac nowa strone. 
+                String accounts = String.join("; ", Optional.ofNullable(subject.getAccountNumbersList()).orElse(new ArrayList<>()));
+                String bankAccounts = String.format("Numery rachunków rozliczeniowych lub imiennych rachunków w SKOK: %s",
+                        accounts.isEmpty() ? BRAK_DANYCH : accounts);
+                row = table.createRow(20);
+                cell = row.createCell(100, bankAccounts);
+                cell.setFont(polishFont);
+                cell.setAlign(HorizontalAlignment.LEFT);
+                cell.setValign(VerticalAlignment.MIDDLE);
+                cell.setLineSpacing(2);
+                cell.setFontSize(12);
+
+                //representatives
+                if (!subject.getRepresentativesResponseList().isEmpty()) {
+                    String representativesHeader = "Osoby wchodzace w sklad organu uprawnionego do reprezentowania";
+                    prepareReposneListTable(table, subject.getRepresentativesResponseList(), representativesHeader, polishFont);
+                }
+
+                //authorizedClerks
+                if (!subject.getAuthorizedClerksResponseList().isEmpty()) {
+                    String authorizedClearks = "Imiona i nazwiska prokurentów oraz ich numery identyfikacji podatkowej lub numery PESEL";
+                    prepareReposneListTable(table, subject.getAuthorizedClerksResponseList(), authorizedClearks, polishFont);
+                }
+
+                //partners
+                if (!subject.getPartnersResponseList().isEmpty()) {
+                    String partners = "Imie i nazwisko lub firma (nazwa) wspólnika oraz jego numer identyfikacji podatkowej lub numer PESEL";
+                    prepareReposneListTable(table, subject.getPartnersResponseList(), partners, polishFont);
+                }
+
+                //other vat date header
+                if(null != subject.getRegistrationDenialDate() || null != subject.getRemovalDate() || null != subject.getRestorationDate()) {
+                    String otherVatDate = "Dodatkowe dane rejestracyjne VAT";
+                    prepareOhterVatHeader(table, otherVatDate);
+                }
+
+                if (null != subject.getRegistrationDenialDate()) {
+                    String registrationDenialDate = String.format("Data odmowy rejestracji VAT: %s", subject.getRegistrationDenialDate().toString());
+                    String registrationDenialBasis = String.format("Podstawa prawna odmowy rejestracji: %s", subject.getRegistrationDenialBasis());
+                    prepareVatTable(table, registrationDenialDate, registrationDenialBasis);
+                }
+
+                if (null != subject.getRemovalDate()) {
+                    String removalDate = String.format("Data wykreslenia rejestracji jako podatnika VAT: %s", subject.getRemovalDate().toString());
+                    String removalBasis = String.format("Podstawa prawna wykreslenia: %s", subject.getRemovalBasis());
+                    prepareVatTable(table, removalDate, removalBasis);
+                }
+
+                if (null != subject.getRestorationDate()) {
+                    String restorationDate = String.format("Data przywrócenia rejestracji jako podatnika VAT: %s", subject.getRestorationDate().toString());
+                    String restorationBasis = String.format("Podstawa prawna przywrócenia: %s", subject.getRestorationBasis());
+                    prepareVatTable(table, restorationDate, restorationBasis);
+                }
+
+            });
+        } else {
+            prepareTableResponseHeader(table);
+            prepareSearchResponseFirstLine(table, reposneIdContent, veryficationDate, "BRAK DANYCH VAT");
+        }
+    }
+
+    private String prepareEmptyParamsInfo(ReportSyncRequest reportSyncRequest, List<SubjectResponse> subjectResponseList) {
+        List<String> multipleParams = Arrays.asList(Optional.ofNullable(reportSyncRequest.getRequestNip()).map(n -> n.split(","))
+                .or(() -> Optional.ofNullable(reportSyncRequest.getRequestRegon()).map(r -> r.split(",")))
+                .or(() -> Optional.ofNullable(reportSyncRequest.getRequestBankAccount()).map(b -> b.split(",")))
+                .orElseThrow(() -> new RuntimeException("NO PARAMS FOUND")));
+        return multipleParams.stream()
+                .map(String::trim)
+                .filter(p -> subjectResponseList.stream().map(SubjectResponse::getNip).noneMatch(p::equals))
+                .filter(p -> subjectResponseList.stream().map(SubjectResponse::getRegon).noneMatch(p::equals))
+                .filter(p -> subjectResponseList.stream().map(resp -> Optional.ofNullable(resp.getAccountNumbersList()).orElse(new ArrayList<>())).noneMatch(list -> list.contains(p)))
+                .collect(Collectors.joining(","));
     }
 
     private void prepareSearchResponseFirstLine(BaseTable table, String reposneIdContent, String veryficationDate, String statusVAT) {
@@ -351,7 +366,7 @@ class PdfTableService {
         cell = row.createCell(30, statusVAT);
 
         if (statusVAT.contains(StatusVat.CZYNNY.getStatusName())) {
-            cell.setTextColor(Color.GREEN);
+            cell.setFillColor(Color.GRAY);
         } else if (statusVAT.contains(StatusVat.ZWOLNIONY.getStatusName())) {
             cell.setTextColor(Color.RED);
         } else if (statusVAT.contains(StatusVat.NIEZAREJESTROWANY.getStatusName())) {
@@ -381,13 +396,88 @@ class PdfTableService {
         cell.setFontSize(15);
         cell.setFont(PDType1Font.COURIER);
         cell.setAlign(HorizontalAlignment.CENTER);
-        table.addHeaderRow(smallHeaderResponseRow);
     }
 
     private String contentOptionalChecker(String content) {
         return Optional.ofNullable(content).orElse(BRAK_DANYCH);
     }
 
+    private void prepareReposneListTable(BaseTable table, List<CompanyPersons> companyPersonsList, String header, PDType0Font polishFont) {
+        Row<PDPage> row = table.createRow(15);
+        Cell<PDPage> cell = row.createCell(100, header);
+        cell.setFont(polishFont);
+        cell.setAlign(HorizontalAlignment.CENTER);
+        cell.setValign(VerticalAlignment.MIDDLE);
+        cell.setFontSize(13);
+        companyPersonsList.forEach(representative -> {
+            //company name
+            String reprCompanyName = String.format("Nazwa: %s", contentOptionalChecker(representative.getCompanyName()));
+            Row<PDPage> persRow = table.createRow(20);
+            Cell<PDPage> persCell = persRow.createCell(100, reprCompanyName);
+            persCell.setFont(polishFont);
+            persCell.setAlign(HorizontalAlignment.LEFT);
+            persCell.setValign(VerticalAlignment.MIDDLE);
+            persCell.setLineSpacing(2);
+            persCell.setFontSize(12);
+            // name lastname
+            String name = String.format("Imie: %s", contentOptionalChecker(representative.getFirstName()));
+            persRow = table.createRow(20);
+            persCell = persRow.createCell(50, name);
+            persCell.setFont(polishFont);
+            persCell.setAlign(HorizontalAlignment.LEFT);
+            persCell.setValign(VerticalAlignment.MIDDLE);
+            persCell.setLineSpacing(2);
+            persCell.setFontSize(12);
+            String lastName = String.format("Nazwisko: %s", contentOptionalChecker(representative.getLastName()));
+            persCell = persRow.createCell(50, lastName);
+            persCell.setFont(polishFont);
+            persCell.setAlign(HorizontalAlignment.LEFT);
+            persCell.setValign(VerticalAlignment.MIDDLE);
+            persCell.setLineSpacing(2);
+            persCell.setFontSize(12);
+            //nip pesel
+            String pesel = String.format("PESEL: %s", contentOptionalChecker(representative.getLastName()));
+            persRow = table.createRow(20);
+            persCell = persRow.createCell(50, pesel);
+            persCell.setFont(polishFont);
+            persCell.setAlign(HorizontalAlignment.LEFT);
+            persCell.setValign(VerticalAlignment.MIDDLE);
+            persCell.setLineSpacing(2);
+            persCell.setFontSize(12);
+            String nip = String.format("NIP: %s", contentOptionalChecker(representative.getNip()));
+            persCell = persRow.createCell(50, nip);
+            persCell.setFont(polishFont);
+            persCell.setAlign(HorizontalAlignment.LEFT);
+            persCell.setValign(VerticalAlignment.MIDDLE);
+            persCell.setLineSpacing(2);
+            persCell.setFontSize(12);
+        });
+    }
+
+    private void prepareOhterVatHeader(BaseTable table, String otherVatDate) {
+        Row<PDPage> row = table.createRow(15);
+        Cell<PDPage> cell = row.createCell(100, otherVatDate);
+        cell.setFont(PDType1Font.TIMES_BOLD);
+        cell.setAlign(HorizontalAlignment.CENTER);
+        cell.setValign(VerticalAlignment.MIDDLE);
+        cell.setFontSize(13);
+    }
+
+    private void prepareVatTable(BaseTable table, String date, String basis) {
+        Row<PDPage> row = table.createRow(20);
+        Cell<PDPage> cell = row.createCell(50, date);
+        cell.setFont(PDType1Font.TIMES_ROMAN);
+        cell.setAlign(HorizontalAlignment.LEFT);
+        cell.setValign(VerticalAlignment.MIDDLE);
+        cell.setLineSpacing(2);
+        cell.setFontSize(12);
+        cell = row.createCell(50, basis);
+        cell.setFont(PDType1Font.TIMES_ROMAN);
+        cell.setAlign(HorizontalAlignment.LEFT);
+        cell.setValign(VerticalAlignment.MIDDLE);
+        cell.setLineSpacing(2);
+        cell.setFontSize(12);
+    }
 }
 
 enum StatusVat {

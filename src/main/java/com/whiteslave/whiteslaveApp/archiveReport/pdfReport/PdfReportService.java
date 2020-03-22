@@ -16,6 +16,7 @@ import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -32,10 +33,12 @@ public class PdfReportService {
 
     private final PdfTableService pdfTableService;
 
-    private static final String POSITIVE_REPORT = "POZYTYWNIE";
-    private static final String NEGATIVE_REPORT = "NEGATYWNIE";
-    private static final String CHECK_FILE_DEST_PATH = System.getProperty("user.dir") + File.separator + "REPORTS" + File.separator + "CHECK_REPORTS";
-    private static final String SEARCH_FILE_DEST_PATH = System.getProperty("user.dir") + File.separator + "REPORTS" + File.separator + "SEARCH_REPORTS";
+    @Value("${reports.search}")
+    private String SEARCH_FILE_DEST_PATH;
+
+    @Value("${reports.check}")
+    private String CHECK_FILE_DEST_PATH;
+
     private static final String FILE_EXT = ".pdf";
     private static final String CHECK_REPORT_FILE_NAME = "raport_weryfikacji_vat";
     private static final String SEARCH_REPORT_FILE_NAME = "raport_szczegółowy_vat";
@@ -56,7 +59,7 @@ public class PdfReportService {
         this.pdfTableService = pdfTableService;
     }
 
-    public void preparePdfReport(ReportSyncRequest reportSyncRequest) {
+    public File preparePdfReport(ReportSyncRequest reportSyncRequest) {
         String reportTile = "";
         File file = null;
 
@@ -77,11 +80,11 @@ public class PdfReportService {
                 createDir(Path.of(SEARCH_FILE_DEST_PATH));
                 file = new File(SEARCH_FILE_DEST_PATH + File.separator + prepareFileName(reportSyncRequest) + FILE_EXT);
                 log.info("FLIE READY: " + file.getPath());
-                //todo logowanie jakieś po zrobieniu raporty, metoda zwracać powinna pdf file czy coś kurwa
             }
-            //todo moze zrobic try dla file aby nie null byl czy cos.
             startGeneratePdf(file, reportTile, reportSyncRequest);
-
+            //todo czy nazwe raportu zapisywac o to jest pytanie
+            log.info(String.format("Report %s generated successful for request id %s. Report file name: %s", reportTile, reportSyncRequest.getGovResponseReportSync().getRequestId(),
+                    Optional.ofNullable(file).map(File::getName).orElse("Cant find file name!")));
         } catch (IOException e) {
             String requestID = Optional.ofNullable(reportSyncRequest.getGovResponseReportSync())
                     .map(GovResponseReportSync::getRequestId)
@@ -90,28 +93,28 @@ public class PdfReportService {
             e.printStackTrace();
         }
 
+        return file;
     }
 
     private String prepareFileName(ReportSyncRequest reportSyncRequest) {
-        String reportDate = reportSyncRequest.getReportDate().toString();
+        String requestDate = reportSyncRequest.getRequestDate().toString().replaceAll(":", "-");
         String reportTypeName = reportSyncRequest.getReportType().equals(ReportType.CHECK) ? CHECK_REPORT_FILE_NAME : SEARCH_REPORT_FILE_NAME;
-        String param = Optional.of(reportSyncRequest)
-                .map(ReportSyncRequest::getRequestNip)
-                .or(() -> Optional.ofNullable(reportSyncRequest.getRequestRegon()))
-                .or(() -> Optional.ofNullable(reportSyncRequest.getRequestBankAccount()))
-                .orElseThrow(() -> new RuntimeException("NO PARAM TO BUILD FILE NAME PROVIDED"));
+        String requestId = Optional.ofNullable(reportSyncRequest.getGovResponseReportSync()).map(GovResponseReportSync::getRequestId).orElse("NO_REQUEST_ID");
         String reportResult = reportSyncRequest.getSearchResult().equals(SearchResult.NEGATIVE) ? "NEGATYWNY" : "POZYTYWNY";
-        String reqDate = reportSyncRequest.getRequestDate().toString().replaceAll(":", "-");
+        String na = "NA_DZIEN";
+        String reportDate = reportSyncRequest.getReportDate().toString();
         String sep = "_";
-        return new StringBuilder(reportDate)
+        return new StringBuilder(requestDate)
                 .append(sep)
                 .append(reportTypeName)
                 .append(sep)
-                .append(param)
+                .append(requestId)
                 .append(sep)
                 .append(reportResult)
                 .append(sep)
-                .append(reqDate)
+                .append(na)
+                .append(sep)
+                .append(reportDate)
                 .toString();
     }
 
@@ -246,3 +249,4 @@ public class PdfReportService {
     }
 
 }
+

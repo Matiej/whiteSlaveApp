@@ -90,6 +90,10 @@ management:
         include: "*"
     health:
       show-details: ALWAYS
+
+reports:
+  search: d:\REPORTS\SEARCH_REPORTS
+  check: d:\REPORTS\CHECK_REPORTS
 ---
 spring:
   profiles: test
@@ -156,3 +160,6 @@ management:
         include: "*"
     health:
       show-details: ALWAYS
+reports:
+  search: '/OPT/'
+  check:  '/OPT/'
