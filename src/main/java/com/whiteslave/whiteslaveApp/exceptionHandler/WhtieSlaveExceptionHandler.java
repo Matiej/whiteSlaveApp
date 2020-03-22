@@ -1,6 +1,7 @@
 package com.whiteslave.whiteslaveApp.exceptionHandler;
 
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.HibernateException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +25,13 @@ public class WhtieSlaveExceptionHandler extends ResponseEntityExceptionHandler {
         ExceptionHandlerResponse exceptionResponse = getExceptionHandlerResponse(ex, request);
         log.error("error message details ==> ", ex);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exceptionResponse);
+    }
+
+    @ExceptionHandler({HibernateException.class})
+    public final ResponseEntity<Object> handleHibernateException(RuntimeException rex, WebRequest request) {
+        ExceptionHandlerResponse exceptionResponse = getExceptionHandlerResponse(rex, request);
+        log.error("Data Base server error. Can not get or save any report.", rex);
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(exceptionResponse);
     }
 
     @Override

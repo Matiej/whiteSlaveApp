@@ -18,7 +18,6 @@ public class ReportSyncRequest {
 
     private LocalDateTime requestDate;
     private LocalDate reportDate;
-    private String pdfFileName;
     private SearchResult searchResult;
     private ReportType reportType;
     private GovResponseReportSync govResponseReportSync;

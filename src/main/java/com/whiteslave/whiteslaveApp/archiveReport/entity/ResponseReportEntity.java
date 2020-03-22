@@ -1,4 +1,4 @@
-package com.whiteslave.whiteslaveApp.reportSync.entity;
+package com.whiteslave.whiteslaveApp.archiveReport.entity;
 
 import lombok.Getter;
 import lombok.Setter;

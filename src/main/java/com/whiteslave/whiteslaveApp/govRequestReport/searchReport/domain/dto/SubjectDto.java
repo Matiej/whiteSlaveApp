@@ -14,7 +14,6 @@ import java.util.List;
 //@Accessors(chain = true)
 @Builder
 public class SubjectDto {
-//todo zrobic buildera, ktory bedzie obejmowal wszystkie pola
     private String name;
     private String nip;
     private String statusVat;

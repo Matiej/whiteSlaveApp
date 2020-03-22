@@ -20,9 +20,9 @@ public class SubjectResponse {
     private String krs;
     private String residenceAddress;
     private String workingAddress;
-    private List<RepresentativesResponse> representativesResponseList;
-    private List<AuthorizedClerksResponse> authorizedClerksResponseList;
-    private List<PartnersResponse> partnersResponseList;
+    private List<CompanyPersons> representativesResponseList;
+    private List<CompanyPersons> authorizedClerksResponseList;
+    private List<CompanyPersons> partnersResponseList;
     private LocalDate registrationLegalDate;
     private String registrationDenialBasis;
     private LocalDate registrationDenialDate;

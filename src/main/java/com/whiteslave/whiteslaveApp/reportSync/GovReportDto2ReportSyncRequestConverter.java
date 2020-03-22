@@ -1,13 +1,11 @@
 package com.whiteslave.whiteslaveApp.reportSync;
 
 import com.whiteslave.whiteslaveApp.govRequestReport.checkReport.domain.dto.CheckReportDto;
+import com.whiteslave.whiteslaveApp.govRequestReport.searchReport.domain.dto.SearchReportDto;
 import com.whiteslave.whiteslaveApp.reportSync.domain.ReportSyncRequest;
 import com.whiteslave.whiteslaveApp.reportSync.domain.enums.ReportType;
 import com.whiteslave.whiteslaveApp.reportSync.domain.enums.SearchResult;
-import com.whiteslave.whiteslaveApp.reportSync.entity.ReportSyncRequestEntity;
-import com.whiteslave.whiteslaveApp.govRequestReport.searchReport.domain.dto.SearchReportDto;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -15,58 +13,51 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-@Service
-@RequiredArgsConstructor
-class ReportSyncServiceImpl implements ReportSyncService {
+@Component
+class GovReportDto2ReportSyncRequestConverter {
 
     private final CheckReportDto2CheckGovReportSyncConverter checkGovReportSyncConverter;
     private final SearchReportDto2SearchGovReportSyncConverter searchGovReportSyncConverter;
-    private final ReportSyncRequest2EntityConverter entityConverter;
-    private final ReportSyncRequestEntityRepository repository;
+    private final static String DATE = "DATE";
+    private final static String NIP = "NIP";
+    private final static String REGON = "REGON";
+    private final static String BANK_ACCOUNT = "BANKACCOUNT";
 
-    @Override
-    public void syncAndSaveCheckReport(CheckReportDto checkReportDto, String...requestParams) {
+    GovReportDto2ReportSyncRequestConverter(CheckReportDto2CheckGovReportSyncConverter checkGovReportSyncConverter, SearchReportDto2SearchGovReportSyncConverter searchGovReportSyncConverter) {
+        this.checkGovReportSyncConverter = checkGovReportSyncConverter;
+        this.searchGovReportSyncConverter = searchGovReportSyncConverter;
+    }
+
+    public ReportSyncRequest checkReportDtoConvertToReportSyncConverter(CheckReportDto checkReportDto, String[] requestParams) {
         Map<String, String> params = prepareParams(requestParams);
-        //todo zrobić plik PDF i zapisać jego dane
-        ReportSyncRequest reportSyncRequest = ReportSyncRequest.builder()
+        return ReportSyncRequest.builder()
                 .requestDate(LocalDateTime.now().withNano(0))
-                .reportDate(LocalDate.parse(params.get("DATE")))
-                .pdfFileName("some.pdf")
+                .reportDate(LocalDate.parse(params.get(DATE)))
                 .searchResult(checkReportDto.getAccountAssigned().equals("TAK") ? SearchResult.POSITIVE : SearchResult.NEGATIVE)
                 .reportType(ReportType.CHECK)
                 .govResponseReportSync(checkGovReportSyncConverter.convertToCheckGovReportSync(checkReportDto))
-                .requestNip(params.get("NIP"))
-                .requestRegon(params.get("REGON"))
-                .requestBankAccount(params.get("BANKACCOUNT"))
+                .requestNip(params.get(NIP))
+                .requestRegon(params.get(REGON))
+                .requestBankAccount(params.get(BANK_ACCOUNT))
                 .build();
-        ReportSyncRequestEntity reportSyncRequestEntity = entityConverter.convert2Entity(reportSyncRequest);
-        repository.save(reportSyncRequestEntity);
-        //create and save pdf file
-        //create and send emailAdress
-        //convert to entity
-        //save entity to data base
-
     }
 
-    @Override
-    public void syncAndSaveSearchReport(SearchReportDto searchReportDto, String... requestParams) {
+    public ReportSyncRequest searchReportDtoConvertToReportSyncConverter(SearchReportDto searchReportDto, String[] requestParams) {
         Map<String, String> params = prepareParams(requestParams);
-        ReportSyncRequest reportSyncRequest = ReportSyncRequest.builder()
+
+        return ReportSyncRequest.builder()
                 .requestDate(LocalDateTime.now().withNano(0))
-                .reportDate(LocalDate.parse(params.get("DATE")))
-                .pdfFileName("some.pdf")
+                .reportDate(LocalDate.parse(params.get(DATE)))
                 .searchResult(searchReportDto.getSubjectDtoList().size()>0 ? SearchResult.POSITIVE : SearchResult.NEGATIVE)
                 .reportType(ReportType.SEARCH)
                 .govResponseReportSync(searchGovReportSyncConverter.convertToSearchGovResponseReportSync(searchReportDto))
-                .requestNip(params.get("NIP"))
-                .requestRegon(params.get("REGON"))
-                .requestBankAccount(params.get("BANKACCOUNT"))
+                .requestNip(params.get(NIP))
+                .requestRegon(params.get(REGON))
+                .requestBankAccount(params.get(BANK_ACCOUNT))
                 .build();
-        ReportSyncRequestEntity reportSyncRequestEntity = entityConverter.convert2Entity(reportSyncRequest);
-        repository.save(reportSyncRequestEntity);
     }
 
-    //todo kurwa jaka tragedia. Cos tym trza zrobic.
+
     private Map<String, String> prepareParams(String... requestParams) {
         Map<String, String> requestParamsMap = new HashMap<>();
         Arrays.stream(requestParams).forEach(param -> {
@@ -82,5 +73,4 @@ class ReportSyncServiceImpl implements ReportSyncService {
         });
         return requestParamsMap;
     }
-
 }

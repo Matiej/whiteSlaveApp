@@ -7,8 +7,6 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PartnersResponse {
-
-    private String companyName, firstName, lastName, nip, pesel;
-
+public class CompanyPersons {
+    protected String companyName, firstName, lastName, nip, pesel;
 }

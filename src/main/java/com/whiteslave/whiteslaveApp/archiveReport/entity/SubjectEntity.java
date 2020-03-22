@@ -1,4 +1,4 @@
-package com.whiteslave.whiteslaveApp.reportSync.entity;
+package com.whiteslave.whiteslaveApp.archiveReport.entity;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -21,19 +21,19 @@ public class SubjectEntity {
     private Long id;
     @Column(name = "SUB_NAME")
     private String name;
-    @Column(name = "SUB_NIP")
+    @Column(name="SUB_NIP")
     private String nip;
-    @Column(name = "SUB_STATUS_VAT")
+    @Column(name="SUB_STATUS_VAT")
     private String statusVat;
-    @Column(name = "SUB_REGON")
+    @Column(name="SUB_REGON")
     private String regon;
-    @Column(name = "SUB_PESEL")
+    @Column(name="SUB_PESEL")
     private String pesel;
-    @Column(name = "SUB_KRS")
+    @Column(name="SUB_KRS")
     private String krs;
-    @Column(name = "SUB_RESIDENCE_ADDRESS")
+    @Column(name="SUB_RESIDENCE_ADDRESS")
     private String residenceAddress;
-    @Column(name = "SUB_WORKING_ADDRESS")
+    @Column(name="SUB_WORKING_ADDRESS")
     private String workingAddress;
 
     @OneToMany(
@@ -57,31 +57,26 @@ public class SubjectEntity {
     @JoinColumn(name = "PAR_SUB_ID")
     private List<PartnersResponseEntity> partnersResponseEntityList;
 
-    @Column(name = "SUB_REGISTRATION_DATE")
+    @Column(name="SUB_REGISTRATION_DATE")
     private LocalDate registrationLegalDate;
-    @Column(name = "SUB_REGISTRATION_BASIS")
+    @Column(name="SUB_REGISTRATION_BASIS")
     private String registrationDenialBasis;
-    @Column(name = "SUB_REGISTRATION_DENIAL_DATE")
+    @Column(name="SUB_REGISTRATION_DENIAL_DATE")
     private LocalDate registrationDenialDate;
-    @Column(name = "SUB_RESTORATION_DENIAL_BASIS")
+    @Column(name="SUB_RESTORATION_DENIAL_BASIS")
     private String restorationBasis;
-    @Column(name = "SUB_RESTORATION_DATE")
+    @Column(name="SUB_RESTORATION_DATE")
     private LocalDate restorationDate;
-    @Column(name = "SUB_REMOVAL_BASIS")
+    @Column(name="SUB_REMOVAL_BASIS")
     private String removalBasis;
-    @Column(name = "SUB_REMOVAL_DATE")
+    @Column(name="SUB_REMOVAL_DATE")
     private LocalDate removalDate;
+    @Column(name="SUB_ACCOUNT_NUMBERS")
+    private String accountNumbers;
     @Column(name = "SUB_VIRTUAL_ACCOUNT")
     private Boolean hasVirtualAccounts;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "SUB_RES_ID")
     private SearchResponseReportEntity searchResponseReportEntity;
-
-    @OneToMany(
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
-    )
-    @JoinColumn(name = "BK_SUB_ID")
-    private List<BankAccountEntity> bankAccountEntityList;
 }
