@@ -3,6 +3,7 @@ package com.whiteslave.whiteslaveApp.archiveReport.pdfReport;
 import be.quodlibet.boxable.*;
 import be.quodlibet.boxable.image.Image;
 import be.quodlibet.boxable.line.LineStyle;
+import com.google.common.collect.Lists;
 import com.whiteslave.whiteslaveApp.reportSync.domain.*;
 import com.whiteslave.whiteslaveApp.reportSync.domain.enums.ReportType;
 import com.whiteslave.whiteslaveApp.reportSync.domain.enums.SearchResult;
@@ -42,7 +43,7 @@ class PdfTableService {
                 bottomMargin, tableWidth, margin, document, page, true, drawContent);
 
         prepareTableHeader(table, image, reportVerResult);
-        prepareTableRequest(table, reportSyncRequest,polishFont);
+        prepareTableRequest(table, reportSyncRequest, polishFont);
 
         //response header
         if (null != reportSyncRequest.getGovResponseReportSync() && reportSyncRequest.getGovResponseReportSync() instanceof CheckGovResponseReportSync) {
@@ -131,7 +132,7 @@ class PdfTableService {
 
     }
 
-    private void prepareTableCheckResponse(BaseTable table, ReportSyncRequest reportSyncRequest ,  PDType0Font polishFont) {
+    private void prepareTableCheckResponse(BaseTable table, ReportSyncRequest reportSyncRequest, PDType0Font polishFont) {
 
         CheckGovResponseReportSync govResponseReportSync = (CheckGovResponseReportSync) reportSyncRequest.getGovResponseReportSync();
         String reposneIdContent = String.format("Identyfikator zapytania: %s", govResponseReportSync.getRequestId());
@@ -170,7 +171,7 @@ class PdfTableService {
         cell.setFontSize(12);
     }
 
-    private void prepareTableSearchResponse(BaseTable table, ReportSyncRequest reportSyncRequest,  PDType0Font polishFont) {
+    private void prepareTableSearchResponse(BaseTable table, ReportSyncRequest reportSyncRequest, PDType0Font polishFont) {
         SearchGovResponseReportSync govResponseReportSync = (SearchGovResponseReportSync) reportSyncRequest.getGovResponseReportSync();
         String reposneIdContent = String.format("Identyfikator zapytania: %s", govResponseReportSync.getRequestId());
         String veryficationDate = String.format("Weryfikacja na dzien: %s", reportSyncRequest.getReportDate().toString());
@@ -279,7 +280,23 @@ class PdfTableService {
                 cell.setFontSize(12);
 
                 //bank accounts
-                //todo podzielic numery kont. Jak wiecej na stronie jak 16 par to generowac nowa strone. 
+                int maxAccountOnPage = 30;
+                List<List<String>> accountPartition = Lists.partition(Optional.ofNullable(subject.getAccountNumbersList()).orElse(new ArrayList<>())
+                        , maxAccountOnPage);
+                accountPartition.forEach(list -> {
+                    String accounts = String.join("; ", list);
+                    String bankAccounts = String.format("Numery rachunków rozliczeniowych lub imiennych rachunków w SKOK: %s",
+                            accounts.isEmpty() ? BRAK_DANYCH : accounts);
+
+                    Row<PDPage> bankRow = table.createRow(20);
+                    Cell<PDPage> bankCell = bankRow.createCell(100, bankAccounts);
+                    bankCell.setFont(polishFont);
+                    bankCell.setAlign(HorizontalAlignment.LEFT);
+                    bankCell.setValign(VerticalAlignment.MIDDLE);
+                    bankCell.setLineSpacing(2);
+                    bankCell.setFontSize(12);
+
+                });
                 String accounts = String.join("; ", Optional.ofNullable(subject.getAccountNumbersList()).orElse(new ArrayList<>()));
                 String bankAccounts = String.format("Numery rachunków rozliczeniowych lub imiennych rachunków w SKOK: %s",
                         accounts.isEmpty() ? BRAK_DANYCH : accounts);
@@ -310,7 +327,7 @@ class PdfTableService {
                 }
 
                 //other vat date header
-                if(null != subject.getRegistrationDenialDate() || null != subject.getRemovalDate() || null != subject.getRestorationDate()) {
+                if (null != subject.getRegistrationDenialDate() || null != subject.getRemovalDate() || null != subject.getRestorationDate()) {
                     String otherVatDate = "Dodatkowe dane rejestracyjne VAT";
                     prepareOhterVatHeader(table, otherVatDate);
                 }
