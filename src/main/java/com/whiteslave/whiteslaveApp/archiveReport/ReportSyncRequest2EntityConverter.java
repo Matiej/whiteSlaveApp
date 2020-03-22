@@ -43,12 +43,12 @@ class ReportSyncRequest2EntityConverter {
         SearchResponseReportEntity entity = new SearchResponseReportEntity();
         entity.setRequestId(searchGovResponseReportSync.getRequestId());
         entity.setSubjectNo(searchGovResponseReportSync.getSubjectResponseList().size());
-        entity.setSubjectEntityList(convertSubject2Entity(searchGovResponseReportSync.getSubjectResponseList()));
-
+        List<SubjectEntity> subjectEntityList = convertSubject2Entity(searchGovResponseReportSync.getSubjectResponseList(),entity);
+        entity.setSubjectEntityList(subjectEntityList);
         return entity;
     }
 
-    private List<SubjectEntity> convertSubject2Entity(List<SubjectResponse> subjectResponseList) {
+    private List<SubjectEntity> convertSubject2Entity(List<SubjectResponse> subjectResponseList, SearchResponseReportEntity responseReportEntity) {
         return Optional.ofNullable(subjectResponseList)
                 .map(subjectResponses -> subjectResponses.stream()
                         .map(sub -> SubjectEntity.builder()
@@ -70,14 +70,15 @@ class ReportSyncRequest2EntityConverter {
                                 .restorationDate(sub.getRestorationDate())
                                 .removalBasis(sub.getRemovalBasis())
                                 .removalDate(sub.getRemovalDate())
-                                .accountNumbers(String.join(",", sub.getAccountNumbersList()))
                                 .hasVirtualAccounts(sub.getHasVirtualAccounts())
+                                .bankAccountEntityList(convertBankAccount2Entity(sub.getAccountNumbersList()))
+                                .searchResponseReportEntity(responseReportEntity)
                                 .build())
                         .collect(Collectors.toList()))
                 .orElse(new ArrayList<>());
     }
 
-    private List<RepresentativesResponseEntity> convertRepresentatives2Entity(List<RepresentativesResponse> representativesResponseList) {
+    private List<RepresentativesResponseEntity> convertRepresentatives2Entity(List<CompanyPersons> representativesResponseList) {
         return Optional.ofNullable(representativesResponseList)
                 .map(r -> r.stream()
                         .map(rep -> RepresentativesResponseEntity.builder()
@@ -91,7 +92,7 @@ class ReportSyncRequest2EntityConverter {
                 .orElse(new ArrayList<>());
     }
 
-    private List<AuthorizedClerksResponseEntity> convertAuthorizedClerksRespone2Entity(List<AuthorizedClerksResponse> authorizedClerksResponseList) {
+    private List<AuthorizedClerksResponseEntity> convertAuthorizedClerksRespone2Entity(List<CompanyPersons> authorizedClerksResponseList) {
         return Optional.ofNullable(authorizedClerksResponseList)
                 .map(a -> a.stream()
                         .map(clerksResponse -> AuthorizedClerksResponseEntity.builder()
@@ -106,7 +107,7 @@ class ReportSyncRequest2EntityConverter {
     }
 
 
-    private List<PartnersResponseEntity> converPartnerResponse2Entity(List<PartnersResponse> partnersResponseList) {
+    private List<PartnersResponseEntity> converPartnerResponse2Entity(List<CompanyPersons> partnersResponseList) {
         return Optional.ofNullable(partnersResponseList)
                 .map(p -> p.stream()
                         .map(partner -> PartnersResponseEntity.builder()
@@ -116,6 +117,14 @@ class ReportSyncRequest2EntityConverter {
                                 .nip(partner.getNip())
                                 .pesel(partner.getPesel())
                                 .build())
+                        .collect(Collectors.toList()))
+                .orElse(new ArrayList<>());
+    }
+
+    private List<BankAccountEntity> convertBankAccount2Entity(List<String> bankAccountList) {
+        return Optional.ofNullable(bankAccountList)
+                .map(bankAccounts -> bankAccounts.stream()
+                        .map(BankAccountEntity::new)
                         .collect(Collectors.toList()))
                 .orElse(new ArrayList<>());
     }

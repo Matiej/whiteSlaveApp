@@ -1,5 +1,6 @@
 package com.whiteslave.whiteslaveApp.archiveReport;
 
+import com.whiteslave.whiteslaveApp.archiveReport.pdfReport.PdfReportService;
 import com.whiteslave.whiteslaveApp.reportSync.domain.ReportSyncRequest;
 import com.whiteslave.whiteslaveApp.reportSync.entity.ReportSyncRequestEntity;
 import lombok.AllArgsConstructor;
@@ -7,17 +8,20 @@ import lombok.extern.slf4j.Slf4j;
 import org.hibernate.HibernateException;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+
 @Service
 @Slf4j
 @AllArgsConstructor
 class ArchReportServiceImpl implements ArchReportService {
 
     private final ReportSyncRequest2EntityConverter converter;
+    private final PdfReportService pdfReportService;
     private final ReportSyncRequestRepository repository;
 
     @Override
-    public void generateReportPdf(ReportSyncRequest reportSyncRequest) {
-
+    public File generateReportPdf(ReportSyncRequest reportSyncRequest) {
+        return pdfReportService.preparePdfReport(reportSyncRequest);
     }
 
     @Override

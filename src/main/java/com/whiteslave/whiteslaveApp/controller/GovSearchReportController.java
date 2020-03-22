@@ -1,17 +1,12 @@
 package com.whiteslave.whiteslaveApp.controller;
 
-import com.whiteslave.whiteslaveApp.reportSync.ReportSyncService;
-import com.whiteslave.whiteslaveApp.govRequestReport.searchReport.domain.SearchReportService;
+import com.whiteslave.whiteslaveApp.reportSync.ReportDtoFacade;
 import com.whiteslave.whiteslaveApp.govRequestReport.searchReport.domain.dto.SearchReportDto;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -21,8 +16,7 @@ import java.util.stream.Collectors;
 @CrossOrigin(origins = "http://localhost:4200")
 public class GovSearchReportController {
 
-    private final SearchReportService searchReportService;
-    private final ReportSyncService reportSyncService;
+    private final ReportDtoFacade reportDtoFacade;
 
     @GetMapping("/bankAccount/date")
     @ApiOperation(value = "Search company by bank account number and date. ", response = SearchReportDto.class)
@@ -40,9 +34,7 @@ public class GovSearchReportController {
     })
     ResponseEntity<Object> searchByBankAccountAndDate(@RequestParam("bankAccount") String bankAccount,
                                                       @RequestParam("date") String date) {
-        String preparedBankAccount = checkAndPrepareSignleValue(bankAccount);
-        SearchReportDto searchReportDto = searchReportService.searchByBankAccountAndDate(preparedBankAccount, date);
-        return ResponseEntity.ok(searchReportDto);
+        return ResponseEntity.ok(reportDtoFacade.searchAndSynchronizeByBankAccountAndDate(bankAccount,date));
     }
 
     @GetMapping("/bankAccounts/date")
@@ -62,8 +54,7 @@ public class GovSearchReportController {
     })
     ResponseEntity<Object> searchByBankAccountsAndDate(@RequestParam("bankAccounts") String bankAccounts,
                                                        @RequestParam("date") String date) {
-        String prepareMultiplePValues = checkAndPrepareMultiplePValues(bankAccounts);
-        return ResponseEntity.ok(searchReportService.searchByBankAccountsAndDate(prepareMultiplePValues, date));
+        return ResponseEntity.ok(reportDtoFacade.searchAndSynchronizeByBankAccountsAndDate(bankAccounts,date));
     }
 
     @GetMapping("/nip/date")
@@ -82,10 +73,7 @@ public class GovSearchReportController {
     })
     ResponseEntity<Object> searchByNipAndDate(@RequestParam("nip") String nip,
                                               @RequestParam("date") String date) {
-        String prepareSignleValue = checkAndPrepareSignleValue(nip);
-        SearchReportDto reportDto = searchReportService.searchByNipAndDate(prepareSignleValue, date);
-        reportSyncService.syncToPDFAndSaveSearchReport(reportDto, prepareSignleValue, date);
-        return ResponseEntity.ok().body(reportDto);
+        return ResponseEntity.ok().body(reportDtoFacade.searchAndSynchronizeByNipAndDate(nip,date));
     }
 
     @GetMapping("/nips/date")
@@ -104,10 +92,7 @@ public class GovSearchReportController {
                     dataTypeClass = String.class, paramType = "query", example = "2019-12-01")
     })
     ResponseEntity<Object> searchByNipsAndDate(@RequestParam("nips") String nips, @RequestParam("date") String date) {
-        String prepareMultiplePValues = checkAndPrepareMultiplePValues(nips);
-        SearchReportDto reportDto = searchReportService.searchByNipsAndDate(prepareMultiplePValues, date);
-        reportSyncService.syncToPDFAndSaveSearchReport(reportDto, prepareMultiplePValues, date);
-        return ResponseEntity.ok(reportDto);
+        return ResponseEntity.ok(reportDtoFacade.searchAndSynchronizeByNipsAndDate(nips,date));
     }
 
     //todo nie wiem czy tutaj to zostawić. Może do innej klasy jakieś przenieść?? hm
@@ -126,10 +111,7 @@ public class GovSearchReportController {
                     dataTypeClass = String.class, paramType = "query", example = "2019-12-01")
     })
     ResponseEntity<Object> searchByRegonAndDate(@RequestParam("regon") String regon, @RequestParam("date") String date) {
-        String prepareSignleValue = checkAndPrepareSignleValue(regon);
-        SearchReportDto reportDto = searchReportService.searchByRegonAndDate(prepareSignleValue, date);
-        reportSyncService.syncToPDFAndSaveSearchReport(reportDto, prepareSignleValue, date);
-        return ResponseEntity.ok(reportDto);
+        return ResponseEntity.ok(reportDtoFacade.searchAndSynchronizeByRegonAndDate(regon,date));
     }
 
     @GetMapping("/regons/date")
@@ -148,23 +130,7 @@ public class GovSearchReportController {
                     dataTypeClass = String.class, paramType = "query", example = "2019-12-01")
     })
     ResponseEntity<Object> searchByRegonsAndDate(@RequestParam String regons, @RequestParam String date) {
-        String multiplePValues = checkAndPrepareMultiplePValues(regons);
-        SearchReportDto reportDto = searchReportService.searchByRegonsAndDate(multiplePValues, date);
-        reportSyncService.syncToPDFAndSaveSearchReport(reportDto, multiplePValues, date);
-        return ResponseEntity.ok(reportDto);
-    }
-
-    private String checkAndPrepareSignleValue(String singleValue) {
-        return singleValue.strip().replaceAll("-", "");
-    }
-
-    private String checkAndPrepareMultiplePValues(String multipleVal) {
-        final String valueSeparator = ",";
-        List<String> stringList = Arrays.asList(multipleVal.strip().replaceAll("-", "").split(valueSeparator));
-        return stringList.stream()
-                .map(t -> t.trim())
-                .filter(trimedVal -> !trimedVal.isEmpty() || !trimedVal.isBlank())
-                .collect(Collectors.joining(valueSeparator));
+        return ResponseEntity.ok(reportDtoFacade.searchAndSynchronizeByRegonsAndDate(regons,date));
     }
 
 }

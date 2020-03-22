@@ -2,7 +2,7 @@ package com.whiteslave.whiteslaveApp.controller;
 
 import com.whiteslave.whiteslaveApp.govRequestReport.checkReport.CheckReportService;
 import com.whiteslave.whiteslaveApp.govRequestReport.checkReport.domain.dto.CheckReportDto;
-import com.whiteslave.whiteslaveApp.reportSync.ReportSyncService;
+import com.whiteslave.whiteslaveApp.reportSync.ReportDtoFacade;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,8 +19,7 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin(origins = "http://localhost:4200")
 public class GovCheckReportController {
 
-    private final CheckReportService checkReportService;
-    private final ReportSyncService reportSyncService;
+    private final ReportDtoFacade reportDtoFacade;
 
     @GetMapping("/nip&bankaccount/date")
     @ApiOperation(value = "Check for quick company information by nip, bank account number and date.", response = CheckReportDto.class)
@@ -41,11 +40,7 @@ public class GovCheckReportController {
     ResponseEntity<Object> checkByNipAndBankAccoutAndDate(@RequestParam("nip") String nip,
                                                           @RequestParam("bankAccount") String bankAccount,
                                                           @RequestParam("date") String date) {
-        String preparedBankAccount = checkAndPrepareSignleValue(bankAccount);
-        String preparedNip = checkAndPrepareSignleValue(nip);
-        CheckReportDto checkReportDto = checkReportService.checkByNipAndBankAccoutAndDate(preparedNip, preparedBankAccount, date);
-        reportSyncService.syncToPDFAndSaveCheckReport(checkReportDto, preparedNip, preparedBankAccount, date);
-        return ResponseEntity.ok(checkReportDto);
+        return ResponseEntity.ok(reportDtoFacade.checkAndSynchronizeByNipAndBankAccoutAndDate(nip,bankAccount,date));
     }
 
     @GetMapping("/regon&bankaccount/date")
@@ -67,18 +62,7 @@ public class GovCheckReportController {
     ResponseEntity<Object> checkByRegonAndBankAccoutnAndDate(@RequestParam("regon") String regon,
                                                              @RequestParam("bankAccount") String bankAccount,
                                                              @RequestParam("date") String date) {
-        String preparedBankAccount = checkAndPrepareSignleValue(bankAccount);
-        String preparedReqgon = checkAndPrepareSignleValue(regon);
-        CheckReportDto checkReportDto = checkReportService.checkByRegonAndBankAccoutnAndDate(preparedReqgon, preparedBankAccount, date);
-        reportSyncService.syncToPDFAndSaveCheckReport(checkReportDto, preparedBankAccount, preparedReqgon,date);
-        return ResponseEntity.ok(checkReportDto);
+        return ResponseEntity.ok(reportDtoFacade.checkAmdSynchronizeByRegonAndBankAccoutnAndDate(regon,bankAccount,date));
     }
-
-
-    //todo nie wiem czy to powinno tu zostać. Raczej tmp
-    private String checkAndPrepareSignleValue(String singleValue) {
-        return singleValue.strip().replaceAll("-", "");
-    }
-
 
 }

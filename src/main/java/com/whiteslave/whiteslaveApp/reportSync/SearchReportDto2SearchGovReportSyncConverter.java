@@ -13,16 +13,19 @@ import java.util.stream.Collectors;
 class SearchReportDto2SearchGovReportSyncConverter {
 
     public SearchGovResponseReportSync convertToSearchGovResponseReportSync(SearchReportDto searchReportDto) {
-        return SearchGovResponseReportSync.builder()
+        SearchGovResponseReportSync reportSync = SearchGovResponseReportSync.builder()
                 .requestId(searchReportDto.getRequestId())
                 .subjectResponseList(convertSubjectDto2SubjectResponse(searchReportDto.getSubjectDtoList()))
                 .build();
+
+        return reportSync;
     }
 
     private List<SubjectResponse> convertSubjectDto2SubjectResponse(List<SubjectDto> subjectDtoList) {
         return Optional.ofNullable(subjectDtoList)
                 .map(s -> s.stream()
                         .map(sub -> SubjectResponse.builder()
+                                .name(sub.getName())
                                 .nip(sub.getNip())
                                 .statusVat(sub.getStatusVat())
                                 .regon(sub.getRegon())
@@ -48,10 +51,10 @@ class SearchReportDto2SearchGovReportSyncConverter {
 
     }
 
-    private List<RepresentativesResponse> convertRepresentativesDto2RepresentativesResponse(List<RepresentativesDto> representativesDtoList) {
+    private List<CompanyPersons> convertRepresentativesDto2RepresentativesResponse(List<RepresentativesDto> representativesDtoList) {
         return Optional.ofNullable(representativesDtoList)
                 .map(r -> r.stream()
-                        .map(representatives -> new RepresentativesResponse(
+                        .map(representatives -> new CompanyPersons(
                                 representatives.getCompanyName(),
                                 representatives.getFirstName(),
                                 representatives.getLastName(),
@@ -61,10 +64,10 @@ class SearchReportDto2SearchGovReportSyncConverter {
                 .orElse(new ArrayList<>());
     }
 
-    private List<AuthorizedClerksResponse> convertAuthorizedClerksDto2AuthorizedClerksResponse(List<AuthorizedClerksDto> authorizedClerksDtoList) {
+    private List<CompanyPersons> convertAuthorizedClerksDto2AuthorizedClerksResponse(List<AuthorizedClerksDto> authorizedClerksDtoList) {
         return Optional.ofNullable(authorizedClerksDtoList)
                 .map(c -> c.stream()
-                        .map(clerk -> new AuthorizedClerksResponse(
+                        .map(clerk -> new CompanyPersons(
                                 clerk.getCompanyName(),
                                 clerk.getFirstName(),
                                 clerk.getLastName(),
@@ -74,10 +77,10 @@ class SearchReportDto2SearchGovReportSyncConverter {
                 .orElse(new ArrayList<>());
     }
 
-    private List<PartnersResponse> convertPartnersDto2PartnersResponse(List<PartnersDto> partnersDtoList) {
+    private List<CompanyPersons> convertPartnersDto2PartnersResponse(List<PartnersDto> partnersDtoList) {
         return Optional.ofNullable(partnersDtoList)
                 .map(p -> p.stream()
-                        .map(partner -> new PartnersResponse(
+                        .map(partner -> new CompanyPersons(
                                 partner.getCompanyName(),
                                 partner.getFirstName(),
                                 partner.getLastName(),
