@@ -9,7 +9,7 @@ import java.util.Optional;
 @Component
 class MfGovCheck2CheckReportDtoConverter {
 
-    public CheckReportDto convertMfGovCheck2CheckReportDto(MfGovCheckResource mfGovCheckResource) {
+    public CheckReportDto convertMfGovCheck2CheckReportDto(final MfGovCheckResource mfGovCheckResource) {
         return Optional.of(mfGovCheckResource.getResult())
                 .map(mfc -> CheckReportDto.builder()
                         .requestId(mfc.getRequestId())

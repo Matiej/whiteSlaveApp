@@ -1,7 +1,7 @@
 package com.whiteslave.whiteslaveApp.archiveReport;
 
+import com.whiteslave.whiteslaveApp.archiveReport.entity.*;
 import com.whiteslave.whiteslaveApp.reportSync.domain.*;
-import com.whiteslave.whiteslaveApp.reportSync.entity.*;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
