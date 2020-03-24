@@ -17,8 +17,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 class PdfTableService {
@@ -297,16 +297,6 @@ class PdfTableService {
                     bankCell.setFontSize(12);
 
                 });
-                String accounts = String.join("; ", Optional.ofNullable(subject.getAccountNumbersList()).orElse(new ArrayList<>()));
-                String bankAccounts = String.format("Numery rachunków rozliczeniowych lub imiennych rachunków w SKOK: %s",
-                        accounts.isEmpty() ? BRAK_DANYCH : accounts);
-                row = table.createRow(20);
-                cell = row.createCell(100, bankAccounts);
-                cell.setFont(polishFont);
-                cell.setAlign(HorizontalAlignment.LEFT);
-                cell.setValign(VerticalAlignment.MIDDLE);
-                cell.setLineSpacing(2);
-                cell.setFontSize(12);
 
                 //representatives
                 if (!subject.getRepresentativesResponseList().isEmpty()) {
