@@ -14,7 +14,7 @@ public interface SearchReportService {
 
     SearchReportDto searchByBankAccountsAndDate(@BankAccount String bankAccounts, @DateParam String date);
 
-    SearchReportDto searchByNipAndDate(@NipNumber String nip, @DateParam String date);
+    SearchReportDto searchByNipAndDate(  String nip,   String date);
 
     SearchReportDto searchByNipsAndDate(@NipNumber String nips, @DateParam String date);
 

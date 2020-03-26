@@ -1,5 +1,6 @@
 package com.whiteslave.whiteslaveApp.exceptionHandler;
 
+import com.whiteslave.whiteslaveApp.govRequestReport.client.MfGovException;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.HibernateException;
 import org.springframework.http.HttpHeaders;
@@ -20,10 +21,17 @@ import java.time.LocalDateTime;
 @RestControllerAdvice
 public class WhtieSlaveExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler({ConstraintViolationException.class,})
+    @ExceptionHandler({ConstraintViolationException.class})
     public final ResponseEntity<Object> handleConstraintViolationException(Exception ex, WebRequest request) {
         ExceptionHandlerResponse exceptionResponse = getExceptionHandlerResponse(ex, request);
-        log.error("error message details ==> ", ex);
+        log.error("Validation error message details ==> ", ex);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exceptionResponse);
+    }
+
+    @ExceptionHandler({MfGovException.class})
+    public final ResponseEntity<Object> handleMfGovExceptionnException(Exception ex, WebRequest request) {
+        ExceptionHandlerResponse exceptionResponse = getExceptionHandlerResponse(ex, request);
+        log.error("MfGovException error message details ==> ", ex);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exceptionResponse);
     }
 
