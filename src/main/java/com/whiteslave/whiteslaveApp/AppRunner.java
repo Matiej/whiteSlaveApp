@@ -35,7 +35,7 @@ public class AppRunner implements CommandLineRunner {
 //    pdfTest();
         try {
 //            testHandlErrors();
-        } catch (FeignException e) {
+        } catch                                                                                                                                                                  (FeignException e) {
             e.printStackTrace();
         }
 
@@ -44,7 +44,7 @@ public class AppRunner implements CommandLineRunner {
         }
 
         public void testHandlErrors () {
-            MfGovSearchResource mfGovSearchResource = mfGovWhiteListClient.searchByNipAndDate("9482025857", "2020-01-01");
+            MfGovSearchResource mfGovSearchResource = mfGovWhiteListClient.searchByNipAndDate("9482025859", "2020-01-01");
             System.out.println(String.format("REQUEST ID: %s", mfGovSearchResource.getResult().getRequestId()));
         }
 

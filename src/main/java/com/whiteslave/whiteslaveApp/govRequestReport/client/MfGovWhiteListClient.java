@@ -1,5 +1,6 @@
 package com.whiteslave.whiteslaveApp.govRequestReport.client;
 
+import com.whiteslave.whiteslaveApp.config.feignConfiguration.FeignConfiguration;
 import com.whiteslave.whiteslaveApp.govRequestReport.client.dto.MfGovCheckResource;
 import com.whiteslave.whiteslaveApp.govRequestReport.client.dto.MfGovSearchResource;
 import com.whiteslave.whiteslaveApp.govRequestReport.client.dto.MfGovSearchResources;
@@ -8,7 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@FeignClient(name = "${feign.name}", url = "${feign.url}")
+@FeignClient(name = "${mfgov.feign.name}", url = "${mfgov.feign.url}", configuration = FeignConfiguration.class)
 public interface MfGovWhiteListClient {
 
     @GetMapping(value = "search/bank-account/{bank-account}", produces = "application/json")

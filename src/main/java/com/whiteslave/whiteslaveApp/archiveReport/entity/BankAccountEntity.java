@@ -1,4 +1,4 @@
-package com.whiteslave.whiteslaveApp.reportSync.entity;
+package com.whiteslave.whiteslaveApp.archiveReport.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,4 +27,3 @@ public class BankAccountEntity {
         this.bankAccountNumber = bankAccountNumber;
     }
 }
-

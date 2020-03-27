@@ -14,14 +14,14 @@ class CheckReportServiceImpl implements CheckReportService {
     private final MfGovCheck2CheckReportDtoConverter converter;
 
     @Override
-    public CheckReportDto checkByNipAndBankAccoutAndDate(String nip, String bankAccount, String date) {
-        MfGovCheckResource mfGovCheckResource = mfGovWhiteListClient.checkByNipAndBankAccoutAndDate(nip, bankAccount, date);
+    public CheckReportDto checkByNipAndBankAccoutAndDate(final String nip, final String bankAccount, final String date) {
+       final MfGovCheckResource mfGovCheckResource = mfGovWhiteListClient.checkByNipAndBankAccoutAndDate(nip, bankAccount, date);
         return converter.convertMfGovCheck2CheckReportDto(mfGovCheckResource);
     }
 
     @Override
-    public CheckReportDto checkByRegonAndBankAccoutnAndDate(String regon, String bankAccount, String date) {
-        MfGovCheckResource mfGovCheckResource = mfGovWhiteListClient.checkByRegonAndBankAccoutnAndDate(regon, bankAccount, date);
+    public CheckReportDto checkByRegonAndBankAccoutnAndDate(final String regon, final String bankAccount, final String date) {
+        final MfGovCheckResource mfGovCheckResource = mfGovWhiteListClient.checkByRegonAndBankAccoutnAndDate(regon, bankAccount, date);
         return converter.convertMfGovCheck2CheckReportDto(mfGovCheckResource);
     }
 }

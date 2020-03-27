@@ -1,7 +1,7 @@
 package com.whiteslave.whiteslaveApp.archiveReport.archReportQuery;
 
+import com.whiteslave.whiteslaveApp.archiveReport.entity.ReportSyncRequestEntity;
 import com.whiteslave.whiteslaveApp.reportSync.domain.enums.ReportType;
-import com.whiteslave.whiteslaveApp.reportSync.entity.ReportSyncRequestEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;

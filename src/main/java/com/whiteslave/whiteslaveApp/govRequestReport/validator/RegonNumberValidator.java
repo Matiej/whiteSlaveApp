@@ -56,35 +56,5 @@ public class RegonNumberValidator extends GovNumbersSharedValidator implements C
 
     }
 
-//    private boolean checkSum9(String regon9) {
-//        AtomicInteger sum = new AtomicInteger();
-//        IntStream.range(0, WEIGHT_9_DIGIT.length).forEach(i ->
-//                sum.addAndGet(WEIGHT_9_DIGIT[i] *
-//                        Integer.parseInt(String.valueOf(regon9.charAt(i)))));
-//        return Optional.of(sum.get())
-//                .map(s -> s % 11)
-//                .map(s -> {
-//                    if (s == 10) {
-//                        s = 0;
-//                    }
-//                    return s==Integer.parseInt(regon9.substring(regon9.length() - 1));
-//                }).orElse(false);
-//    }
-//
-//    private boolean checkSum14(String regon14) {
-//        AtomicInteger sum = new AtomicInteger();
-//        IntStream.range(0, WEIGHT_14_DIGIT.length).forEach(i ->
-//                sum.addAndGet(WEIGHT_14_DIGIT[i] *
-//                        Integer.parseInt(String.valueOf(regon14.charAt(i)))));
-//        return Optional.of(sum.get())
-//                .map(s -> s % 11)
-//                .map(s -> {
-//                    if(s == 10) {
-//                        s = 0;
-//                    }
-//                    return s == Integer.parseInt(regon14.substring(regon14.length() - 1));
-//                })
-//                .orElse(false);
-//    }
 }
 

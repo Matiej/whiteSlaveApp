@@ -19,7 +19,7 @@ class MfGovSearch2SearchReportDtoConventer {
                         .orElse(new ArrayList<>())));
     }
 
-    public SearchReportDto convertMfSearchResources2SearchReportDto(MfGovSearchResources mfGovSearchResources) {
+    public SearchReportDto convertMfSearchResources2SearchReportDto(final MfGovSearchResources mfGovSearchResources) {
         MfGovSearchResults result = mfGovSearchResources.getResult();
         return new SearchReportDto()
                 .setRequestId(result.getRequestId())

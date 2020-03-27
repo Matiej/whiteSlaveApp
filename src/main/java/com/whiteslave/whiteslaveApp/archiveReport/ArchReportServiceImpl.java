@@ -1,8 +1,8 @@
 package com.whiteslave.whiteslaveApp.archiveReport;
 
+import com.whiteslave.whiteslaveApp.archiveReport.entity.ReportSyncRequestEntity;
 import com.whiteslave.whiteslaveApp.archiveReport.pdfReport.PdfReportService;
 import com.whiteslave.whiteslaveApp.reportSync.domain.ReportSyncRequest;
-import com.whiteslave.whiteslaveApp.reportSync.entity.ReportSyncRequestEntity;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.HibernateException;
