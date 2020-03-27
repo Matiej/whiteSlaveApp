@@ -3,7 +3,6 @@ package com.whiteslave.whiteslaveApp.govRequestReport.searchReport;
 import com.whiteslave.whiteslaveApp.govRequestReport.client.MfGovWhiteListClient;
 import com.whiteslave.whiteslaveApp.govRequestReport.client.dto.MfGovSearchResource;
 import com.whiteslave.whiteslaveApp.govRequestReport.client.dto.MfGovSearchResources;
-import com.whiteslave.whiteslaveApp.govRequestReport.searchReport.domain.SearchReportService;
 import com.whiteslave.whiteslaveApp.govRequestReport.searchReport.domain.dto.SearchReportDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
