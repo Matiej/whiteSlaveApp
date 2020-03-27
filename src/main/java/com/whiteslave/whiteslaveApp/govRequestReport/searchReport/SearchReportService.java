@@ -1,4 +1,4 @@
-package com.whiteslave.whiteslaveApp.govRequestReport.searchReport.domain;
+package com.whiteslave.whiteslaveApp.govRequestReport.searchReport;
 
 import com.whiteslave.whiteslaveApp.govRequestReport.searchReport.domain.dto.SearchReportDto;
 import com.whiteslave.whiteslaveApp.govRequestReport.validator.BankAccount;

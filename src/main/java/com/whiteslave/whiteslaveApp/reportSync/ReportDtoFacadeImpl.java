@@ -2,7 +2,7 @@ package com.whiteslave.whiteslaveApp.reportSync;
 
 import com.whiteslave.whiteslaveApp.govRequestReport.checkReport.CheckReportService;
 import com.whiteslave.whiteslaveApp.govRequestReport.checkReport.domain.dto.CheckReportDto;
-import com.whiteslave.whiteslaveApp.govRequestReport.searchReport.domain.SearchReportService;
+import com.whiteslave.whiteslaveApp.govRequestReport.searchReport.SearchReportService;
 import com.whiteslave.whiteslaveApp.govRequestReport.searchReport.domain.dto.SearchReportDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

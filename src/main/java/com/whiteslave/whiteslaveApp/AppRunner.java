@@ -3,7 +3,7 @@ package com.whiteslave.whiteslaveApp;
 import com.whiteslave.whiteslaveApp.archiveReport.pdfReport.PdfReportService;
 import com.whiteslave.whiteslaveApp.govRequestReport.client.MfGovWhiteListClient;
 import com.whiteslave.whiteslaveApp.govRequestReport.client.dto.MfGovSearchResource;
-import com.whiteslave.whiteslaveApp.govRequestReport.searchReport.domain.SearchReportService;
+import com.whiteslave.whiteslaveApp.govRequestReport.searchReport.SearchReportService;
 import com.whiteslave.whiteslaveApp.reportSync.domain.*;
 import com.whiteslave.whiteslaveApp.reportSync.domain.enums.ReportType;
 import com.whiteslave.whiteslaveApp.reportSync.domain.enums.SearchResult;
