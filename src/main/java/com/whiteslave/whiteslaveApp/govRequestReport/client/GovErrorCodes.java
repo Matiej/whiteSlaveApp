@@ -15,7 +15,7 @@ public enum  GovErrorCodes {
     WL110("WL-110","The 'account number' field contains illegal characters. Only digits required."),
     WL111("WL-111","Incorrect account number."),
     WL112("WL-112","NIP field can not be empty."),
-    WL113("WL-113","The NIP field has the wrong length. 9 or 14 characters required."),
+    WL113("WL-113","The NIP field has the wrong length. 10 characters required"),
     WL114("WL-114","NIP field contains illegal characters. Only digits required."),
     WL115("WL-115","Incorrect NIP."),
     WL116("WL-116","The 'subject name' field cannot be empty."),
