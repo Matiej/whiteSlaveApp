@@ -55,7 +55,6 @@ class GovReportDto2ReportSyncRequestConverter {
                 .build();
     }
 
-    //todo przekombinowane moze lepiej recznie mape robic
     private Map<String, String> prepareParams(String... requestParams) {
         Map<String, String> requestParamsMap = new HashMap<>();
         Arrays.stream(requestParams).forEach(param -> {
