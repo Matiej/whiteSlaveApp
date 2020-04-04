@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-4@Setter
+@Setter
 public class ArchReportQueryDto implements Serializable {
 
     private Long id;
