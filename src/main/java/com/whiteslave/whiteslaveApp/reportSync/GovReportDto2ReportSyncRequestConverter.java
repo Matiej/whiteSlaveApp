@@ -9,9 +9,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Component
 class GovReportDto2ReportSyncRequestConverter {
@@ -48,7 +46,7 @@ class GovReportDto2ReportSyncRequestConverter {
         return ReportSyncRequest.builder()
                 .requestDate(LocalDateTime.now().withNano(0))
                 .reportDate(LocalDate.parse(params.get(DATE)))
-                .searchResult(searchReportDto.getSubjectDtoList().size()>0 ? SearchResult.POSITIVE : SearchResult.NEGATIVE)
+                .searchResult(searchReportDto.getSubjectDtoList().size() > 0 ? SearchResult.POSITIVE : SearchResult.NEGATIVE)
                 .reportType(ReportType.SEARCH)
                 .govResponseReportSync(searchGovReportSyncConverter.convertToSearchGovResponseReportSync(searchReportDto))
                 .requestNip(params.get(NIP))
@@ -57,20 +55,31 @@ class GovReportDto2ReportSyncRequestConverter {
                 .build();
     }
 
-
     private Map<String, String> prepareParams(String... requestParams) {
         Map<String, String> requestParamsMap = new HashMap<>();
         Arrays.stream(requestParams).forEach(param -> {
-            if (param.length() == 9 || param.length() == 14) {
-                requestParamsMap.put("REGON", param);
-            } else if (param.length() == 26) {
-                requestParamsMap.put("BANKACCOUNT", param);
-            } else if (param.length() == 10 && param.matches("[0-9]+")) {
-                requestParamsMap.put("NIP", param);
+            if (param.contains(",")) {
+                Set<String> paramTypes = new LinkedHashSet<>();
+                Arrays.stream(param.split(",")).forEach(p -> paramTypes.add(paramSelector(p)));
+                if (paramTypes.size() == 1) {
+                    requestParamsMap.put(new ArrayList<>(paramTypes).get(0), param);
+                }
             } else {
-                requestParamsMap.put("DATE", param);
+                requestParamsMap.put(paramSelector(param), param);
             }
         });
         return requestParamsMap;
+    }
+
+    private String paramSelector(String param) {
+        if (param.length() == 9 || param.length() == 14) {
+            return REGON;
+        } else if (param.length() == 26) {
+            return BANK_ACCOUNT;
+        } else if (param.length() == 10 && param.matches("[0-9]+")) {
+            return NIP;
+        } else {
+            return DATE;
+        }
     }
 }

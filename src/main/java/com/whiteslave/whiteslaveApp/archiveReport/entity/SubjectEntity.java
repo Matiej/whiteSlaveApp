@@ -1,17 +1,16 @@
 package com.whiteslave.whiteslaveApp.archiveReport.entity;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.List;
 
-@Getter
-@Setter
+@Data
 @Entity
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "SUBJECT_RESPONSE")
 public class SubjectEntity {
 
@@ -84,4 +83,6 @@ public class SubjectEntity {
     )
     @JoinColumn(name = "BK_SUB_ID")
     private List<BankAccountEntity> bankAccountEntityList;
+
+
 }

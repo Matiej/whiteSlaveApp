@@ -1,19 +1,19 @@
 package com.whiteslave.whiteslaveApp.archiveReport.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
-@AllArgsConstructor
+
 @Getter
 @Setter
 @Entity
-@Table(name = "BANK_ACCOUNT")
 @Builder
-public class BankAccountEntity {
+@AllArgsConstructor
+@NoArgsConstructor
+@Table(name = "BANK_ACCOUNT")
+public class BankAccountEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

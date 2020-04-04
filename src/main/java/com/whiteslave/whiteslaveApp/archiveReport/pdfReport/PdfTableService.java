@@ -7,6 +7,7 @@ import com.google.common.collect.Lists;
 import com.whiteslave.whiteslaveApp.reportSync.domain.*;
 import com.whiteslave.whiteslaveApp.reportSync.domain.enums.ReportType;
 import com.whiteslave.whiteslaveApp.reportSync.domain.enums.SearchResult;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.font.PDType0Font;
@@ -21,6 +22,7 @@ import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 class PdfTableService {
 
     private static final String POSITIVE_REPORT = "POZYTYWNIE";
@@ -178,18 +180,21 @@ class PdfTableService {
 
         Integer subjectReponseNumber = Optional.ofNullable(govResponseReportSync.getSubjectResponseList()).map(List::size).orElse(0);
         if (subjectReponseNumber > 0) {
-
-            String paramsInfo = prepareEmptyParamsInfo(reportSyncRequest, govResponseReportSync.getSubjectResponseList());
-            if (!paramsInfo.isEmpty()) {
-                String nonMatechParamsCell = String.format("Zapytania bez wyników: %s", paramsInfo);
-                Row<PDPage> row = table.createRow(20);
-                Cell<PDPage> cell = row.createCell(100, nonMatechParamsCell);
-                cell.setFont(polishFont);
-                cell.setAlign(HorizontalAlignment.LEFT);
-                cell.setValign(VerticalAlignment.MIDDLE);
-                cell.setTextColor(Color.RED);
-                cell.setLineSpacing(2);
-                cell.setFontSize(12);
+            try {
+                String paramsInfo = prepareEmptyParamsInfo(reportSyncRequest, govResponseReportSync.getSubjectResponseList());
+                if (!paramsInfo.isEmpty()) {
+                    String nonMatechParamsCell = String.format("Zapytania bez wyników: %s", paramsInfo);
+                    Row<PDPage> row = table.createRow(20);
+                    Cell<PDPage> cell = row.createCell(100, nonMatechParamsCell);
+                    cell.setFont(polishFont);
+                    cell.setAlign(HorizontalAlignment.LEFT);
+                    cell.setValign(VerticalAlignment.MIDDLE);
+                    cell.setTextColor(Color.RED);
+                    cell.setLineSpacing(2);
+                    cell.setFontSize(12);
+                }
+            }catch (Exception e) {
+                log.error(e.getMessage());
             }
 
             govResponseReportSync.getSubjectResponseList().forEach(subject -> {
@@ -346,12 +351,12 @@ class PdfTableService {
             prepareSearchResponseFirstLine(table, reposneIdContent, veryficationDate, "BRAK DANYCH VAT");
         }
     }
-
-    private String prepareEmptyParamsInfo(ReportSyncRequest reportSyncRequest, List<SubjectResponse> subjectResponseList) {
+    private String prepareEmptyParamsInfo(ReportSyncRequest reportSyncRequest, List<SubjectResponse> subjectResponseList) throws Exception {
         List<String> multipleParams = Arrays.asList(Optional.ofNullable(reportSyncRequest.getRequestNip()).map(n -> n.split(","))
                 .or(() -> Optional.ofNullable(reportSyncRequest.getRequestRegon()).map(r -> r.split(",")))
                 .or(() -> Optional.ofNullable(reportSyncRequest.getRequestBankAccount()).map(b -> b.split(",")))
-                .orElseThrow(() -> new RuntimeException("NO PARAMS FOUND")));
+                .orElseThrow(() -> new Exception(String.format("Can not prepare PDF report. No request params found for id: %s",
+                        reportSyncRequest.getGovResponseReportSync().getRequestId()))));
         return multipleParams.stream()
                 .map(String::trim)
                 .filter(p -> subjectResponseList.stream().map(SubjectResponse::getNip).noneMatch(p::equals))
