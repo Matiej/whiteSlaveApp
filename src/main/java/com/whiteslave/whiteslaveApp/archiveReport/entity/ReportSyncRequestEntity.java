@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -13,7 +14,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Table(name = "REPORT_SYNC_REQUEST")
-public class ReportSyncRequestEntity {
+public class ReportSyncRequestEntity implements Serializable {
 
     @Id
     @Column(name = "RSY_ID")

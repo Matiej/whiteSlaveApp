@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collection;
 import java.util.List;
 
 @Slf4j
@@ -20,9 +19,10 @@ class ArchReportQueryController {
 
     private final ArchRepotQueryRepository repository;
     private final SearchReportSubjectQueryRepository subjectQueryRepository;
+    private final ArchReportQueryFacade archReportQueryFacade;
 
     @GetMapping("/checkSyncReports")
-    @ApiOperation(value = "Check for quick company reports saved in data base. Include query and gov response ", response = ArchCheckReportQueryDto.class)
+    @ApiOperation(value = "Check for quick company reports saved in data base. Include query and gov response ", response = CheckReportQueryDto.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Search successful"),
             @ApiResponse(code = 400, message = "The request cannot be fulfilled because of wrong syntax"),
@@ -30,12 +30,12 @@ class ArchReportQueryController {
             @ApiResponse(code = 503, message = "Server error. Can't get any reports from data base."),
     })
     public ResponseEntity<Object> findAllSyncCheckReports() {
-        List<ArchCheckReportQueryDto> byReportType = repository.findAllCheckReports();
+        List<CheckReportQueryDto> byReportType = archReportQueryFacade.findAllCheckReports();
         return ResponseEntity.ok().body(byReportType);
     }
 
     @GetMapping("/checkSyncReport")
-    @ApiOperation(value = "Check for quick company report by ID param saved in data base. Include query and gov response ", response = ArchCheckReportQueryDto.class)
+    @ApiOperation(value = "Check for quick company report by ID param saved in data base. Include query and gov response ", response = CheckReportQueryDto.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Search successful"),
             @ApiResponse(code = 400, message = "The request cannot be fulfilled because of wrong syntax"),
@@ -47,12 +47,12 @@ class ArchReportQueryController {
                     dataTypeClass = String.class, paramType = "query")
     })
     public ResponseEntity<Object> findSyncCheckReportById(@RequestParam("id") Long id) {
-        ArchCheckReportQueryDto checkReportById = repository.findCheckReportById(id);
+        CheckReportQueryDto checkReportById = archReportQueryFacade.findCheckReportById(id);
         return ResponseEntity.ok().body(checkReportById);
     }
 
     @GetMapping("/searchSyncReports")
-    @ApiOperation(value = "Check for detail company reports saved in data base. Include query and gov response ", response = SearchReportSubjectQueryView.class)
+    @ApiOperation(value = "Check for detail company reports saved in data base. Include query and gov response ", response = SearchReportSubjectQueryDto.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Search successful"),
             @ApiResponse(code = 400, message = "The request cannot be fulfilled because of wrong syntax"),
@@ -60,7 +60,7 @@ class ArchReportQueryController {
             @ApiResponse(code = 503, message = "Server error. Can't get any reports from data base."),
     })
     public ResponseEntity<Object> findAllSyncSearchReportsV() {
-        List<SearchReportSubjectQueryView> searchReports = subjectQueryRepository.findBy();
+        List<SearchReportSubjectQueryDto> searchReports = archReportQueryFacade.findBy();
         return ResponseEntity.ok().body(searchReports);
     }
 

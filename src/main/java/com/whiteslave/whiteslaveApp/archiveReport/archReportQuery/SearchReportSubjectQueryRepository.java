@@ -9,5 +9,5 @@ import java.util.List;
 @Repository
 public interface SearchReportSubjectQueryRepository extends JpaRepository<SubjectEntity, Long> {
 
-    List<SearchReportSubjectQueryView> findBy();
+    List<SearchReportSubjectQueryDto> findBy();
 }
