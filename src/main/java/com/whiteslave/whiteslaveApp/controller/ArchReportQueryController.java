@@ -17,8 +17,6 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:4200")
 class ArchReportQueryController {
 
-    private final ArchRepotQueryRepository repository;
-    private final SearchReportSubjectQueryRepository subjectQueryRepository;
     private final ArchReportQueryFacade archReportQueryFacade;
 
     @GetMapping("/checkSyncReports")
