@@ -1,20 +1,25 @@
 package com.whiteslave.whiteslaveApp.archiveReport.archReportQuery;
 
+import com.whiteslave.whiteslaveApp.archiveReport.archReportQuery.dto.CheckReportQueryDto;
+import com.whiteslave.whiteslaveApp.archiveReport.archReportQuery.repository.ReportSyncRequestEntityRepository;
+import com.whiteslave.whiteslaveApp.archiveReport.archReportQuery.repository.SubjectEntityQueryRepository;
+import com.whiteslave.whiteslaveApp.archiveReport.archReportQuery.view.CheckReportQueryView;
+import com.whiteslave.whiteslaveApp.archiveReport.archReportQuery.view.SearchNegativeReportQueryView;
+import com.whiteslave.whiteslaveApp.archiveReport.archReportQuery.view.SearchPositiveReportQueryView;
+import com.whiteslave.whiteslaveApp.reportSync.domain.enums.ReportType;
 import com.whiteslave.whiteslaveApp.reportSync.domain.enums.SearchResult;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
 class ArchReportQueryFacadeImpl implements ArchReportQueryFacade {
 
-    private final SearchReportSubjectQueryRepository subjectQueryRepository;
-    private final ArchRepotQueryRepository archRepotQueryRepository;
-    private final ReportSyncRequestEntity2SearchReportSubjectQueryDto converter;
+    private final SubjectEntityQueryRepository subjectQueryRepository;
+    private final ReportSyncRequestEntityRepository reportSyncRequestEntityRepository;
 
     /*
     Lista pozytywnych search reports pobrana z Projekcji na klasę za pomocą JPA OPEN PROJECTION.
@@ -25,21 +30,28 @@ class ArchReportQueryFacadeImpl implements ArchReportQueryFacade {
     przekonwertowana.
      */
     @Override
-    public List<SearchReportSubjectQueryDto> findBy() {
-        List<SearchReportSubjectQueryDto> searchPositiveReportList = subjectQueryRepository.findBy();
-        List<SearchReportSubjectQueryDto> searchNegativeReportList = converter.convert2Dto(archRepotQueryRepository.findAllBySearchResult(SearchResult.NEGATIVE));
-        return Stream.concat(searchNegativeReportList.stream(), searchPositiveReportList.stream())
-                .collect(Collectors.toList());
+    public List<SearchPositiveReportQueryView> allSearchReports() {
+        List<SearchPositiveReportQueryView> searchPositiveReportQueryViewList = subjectQueryRepository.findAllBy();
+        List<SearchNegativeReportQueryView> searchNegativeReportQueryViewList = reportSyncRequestEntityRepository
+                .findAllByReportTypeAndSearchResult(ReportType.SEARCH, SearchResult.NEGATIVE);
+        searchPositiveReportQueryViewList.addAll(searchNegativeReportQueryViewList);
+        searchPositiveReportQueryViewList.sort(Comparator.comparing(SearchPositiveReportQueryView::getId));
+        return searchPositiveReportQueryViewList;
     }
 
     @Override
     public List<CheckReportQueryDto> findAllCheckReports() {
-        return archRepotQueryRepository.findAllCheckReports();
+        return reportSyncRequestEntityRepository.findAllCheckReports();
     }
 
     @Override
     public CheckReportQueryDto findCheckReportById(Long id) {
-        return archRepotQueryRepository.findCheckReportById(id);
+        return reportSyncRequestEntityRepository.findCheckReportById(id);
+    }
+
+    @Override
+    public List<CheckReportQueryView> allCheckReports() {
+        return reportSyncRequestEntityRepository.findByReportType(ReportType.CHECK);
     }
 
 

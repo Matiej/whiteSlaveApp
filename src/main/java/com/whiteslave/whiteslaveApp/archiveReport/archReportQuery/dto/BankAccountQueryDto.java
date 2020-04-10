@@ -1,4 +1,4 @@
-package com.whiteslave.whiteslaveApp.archiveReport.archReportQuery;
+package com.whiteslave.whiteslaveApp.archiveReport.archReportQuery.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

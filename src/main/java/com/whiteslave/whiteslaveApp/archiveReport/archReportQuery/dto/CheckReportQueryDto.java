@@ -1,4 +1,4 @@
-package com.whiteslave.whiteslaveApp.archiveReport.archReportQuery;
+package com.whiteslave.whiteslaveApp.archiveReport.archReportQuery.dto;
 
 import com.whiteslave.whiteslaveApp.reportSync.domain.enums.ReportType;
 import com.whiteslave.whiteslaveApp.reportSync.domain.enums.SearchResult;
