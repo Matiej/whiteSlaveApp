@@ -1,11 +1,15 @@
 package com.whiteslave.whiteslaveApp.archiveReport.archReportQuery.view;
 
+import com.whiteslave.whiteslaveApp.archiveReport.archReportQuery.dto.BankAccountQueryDto;
+import com.whiteslave.whiteslaveApp.archiveReport.archReportQuery.dto.CompanyPersonsQueryDto;
+import com.whiteslave.whiteslaveApp.archiveReport.entity.RepresentativesResponseEntity;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
-public interface SearchPositiveReportQueryView extends ArchReportQueryView {
+public interface SearchReportDetailsQueryView extends SearchPositiveReportQueryView {
 
     @Override
     @Value("#{target.searchResponseReportEntity.requestId}")
@@ -52,4 +56,17 @@ public interface SearchPositiveReportQueryView extends ArchReportQueryView {
     String getName();
 
     String getStatusVat();
+
+    @Value("#{@entity2DtoQueryViewConverter.convert2CompanyPersonsQueryDto(target.representativesEntityList)}")
+    List<CompanyPersonsQueryDto> getRepresentativesDtoList();
+
+    @Value("#{@entity2DtoQueryViewConverter.convert2CompanyPersonsQueryDto(target.authorizedClerksResponseEntityList)}")
+    List<CompanyPersonsQueryDto> getAuhorizedClerksDtoList();
+
+    @Value("#{@entity2DtoQueryViewConverter.convert2CompanyPersonsQueryDto(target.partnersResponseEntityList)}")
+    List<CompanyPersonsQueryDto> getPartnersDtoList();
+
+    @Value("#{@entity2DtoQueryViewConverter.convert2BankAccountQueryDto(target.bankAccountEntityList)}")
+    List<BankAccountQueryDto> getBankAccountDtoList();
+
 }

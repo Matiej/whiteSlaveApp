@@ -6,6 +6,7 @@ import com.whiteslave.whiteslaveApp.archiveReport.archReportQuery.repository.Sub
 import com.whiteslave.whiteslaveApp.archiveReport.archReportQuery.view.CheckReportQueryView;
 import com.whiteslave.whiteslaveApp.archiveReport.archReportQuery.view.SearchNegativeReportQueryView;
 import com.whiteslave.whiteslaveApp.archiveReport.archReportQuery.view.SearchPositiveReportQueryView;
+import com.whiteslave.whiteslaveApp.archiveReport.archReportQuery.view.SearchReportDetailsQueryView;
 import com.whiteslave.whiteslaveApp.reportSync.domain.enums.ReportType;
 import com.whiteslave.whiteslaveApp.reportSync.domain.enums.SearchResult;
 import lombok.RequiredArgsConstructor;
@@ -39,12 +40,7 @@ class ArchReportQueryFacadeImpl implements ArchReportQueryFacade {
         return searchPositiveReportQueryViewList;
     }
 
-    @Override
-    public List<CheckReportQueryDto> findAllCheckReports() {
-        return reportSyncRequestEntityRepository.findAllCheckReports();
-    }
-
-    @Override
+    @Override //todo zmiana na view
     public CheckReportQueryDto findCheckReportById(Long id) {
         return reportSyncRequestEntityRepository.findCheckReportById(id);
     }
@@ -52,6 +48,7 @@ class ArchReportQueryFacadeImpl implements ArchReportQueryFacade {
     @Override
     public List<CheckReportQueryView> allCheckReports() {
         return reportSyncRequestEntityRepository.findByReportType(ReportType.CHECK);
+
     }
 
 

@@ -5,6 +5,7 @@ import com.whiteslave.whiteslaveApp.archiveReport.archReportQuery.dto.CheckRepor
 import com.whiteslave.whiteslaveApp.archiveReport.archReportQuery.repository.SubjectEntityQueryRepository;
 import com.whiteslave.whiteslaveApp.archiveReport.archReportQuery.view.CheckReportQueryView;
 import com.whiteslave.whiteslaveApp.archiveReport.archReportQuery.view.SearchPositiveReportQueryView;
+import com.whiteslave.whiteslaveApp.archiveReport.archReportQuery.view.SearchReportDetailsQueryView;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -78,7 +79,8 @@ class ArchReportQueryController {
     public ResponseEntity<Object> findTest() {
 
         List<SearchPositiveReportQueryView> byAll = subjectEntityQueryRepository.findAllBy();
-        return ResponseEntity.ok().body(byAll);
+        SearchReportDetailsQueryView oneBy = subjectEntityQueryRepository.findOneById(1l);
+        return ResponseEntity.ok().body(oneBy);
     }
 
 }

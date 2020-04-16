@@ -37,7 +37,7 @@ public interface SearchNegativeReportQueryView extends SearchPositiveReportQuery
 
     @Override
     @Value("#{target.responseReportEntity.id}")
-    Long getSubjectId();
+    Long getSyncRequestEntityId();
 
     @Override
     @Value("#{target.responseReportEntity.subjectNo}")

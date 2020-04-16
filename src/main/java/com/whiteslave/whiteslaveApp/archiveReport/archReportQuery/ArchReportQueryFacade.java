@@ -10,9 +10,8 @@ public interface ArchReportQueryFacade {
 
     List<SearchPositiveReportQueryView> allSearchReports();
 
-    List<CheckReportQueryDto> findAllCheckReports();
-
     CheckReportQueryDto findCheckReportById(Long id);
 
     List<CheckReportQueryView> allCheckReports();
+
 }
