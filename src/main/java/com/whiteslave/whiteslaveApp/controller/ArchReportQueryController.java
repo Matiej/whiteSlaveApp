@@ -23,7 +23,6 @@ import java.util.List;
 class ArchReportQueryController {
 
     private final ArchReportQueryFacade archReportQueryFacade;
-    private final SubjectEntityQueryRepository subjectEntityQueryRepository;
 
     @GetMapping("/checkSyncReports")
     @ApiOperation(value = "Check for quick company reports saved in data base. Include query and gov response ", response = CheckReportQueryView.class)
@@ -63,24 +62,43 @@ class ArchReportQueryController {
             @ApiResponse(code = 404, message = "Server has not found anything matching the requested URI! No users found!"),
             @ApiResponse(code = 503, message = "Server error. Can't get any reports from data base."),
     })
-    public ResponseEntity<Object> findAllSyncSearchReportsV() {
+    public ResponseEntity<Object> findAllSyncSearchReports() {
         List<SearchPositiveReportQueryView> searchReports = archReportQueryFacade.allSearchReports();
         return ResponseEntity.ok().body(searchReports);
     }
 
-    @GetMapping("/test")
-    @ApiOperation(value = "TO TEST", response = SearchPositiveReportQueryView.class)
+    @GetMapping("/searchSyncReport")
+    @ApiOperation(value = "Check for detail company reports saved in data base. Include query and gov response ",
+            response = SearchReportDetailsQueryView.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Search successful"),
             @ApiResponse(code = 400, message = "The request cannot be fulfilled because of wrong syntax"),
             @ApiResponse(code = 404, message = "Server has not found anything matching the requested URI! No users found!"),
             @ApiResponse(code = 503, message = "Server error. Can't get any reports from data base."),
     })
-    public ResponseEntity<Object> findTest() {
-
-        List<SearchPositiveReportQueryView> byAll = subjectEntityQueryRepository.findAllBy();
-        SearchReportDetailsQueryView oneBy = subjectEntityQueryRepository.findOneById(1l);
-        return ResponseEntity.ok().body(oneBy);
+    @ApiImplicitParams({
+            @ApiImplicitParam(readOnly = true, name = "id", value = "Search report ID",
+                    dataTypeClass = String.class, paramType = "query")
+    })
+    public ResponseEntity<Object> findSyncSearchReportDetailsById(@RequestParam("id") Long id) {
+        SearchReportDetailsQueryView searchReportDetails = archReportQueryFacade.findSearchReportDetailsById(id);
+        return ResponseEntity.ok().body(searchReportDetails);
     }
+
+//
+//    @GetMapping("/test")
+//    @ApiOperation(value = "TO TEST", response = SearchPositiveReportQueryView.class)
+//    @ApiResponses(value = {
+//            @ApiResponse(code = 200, message = "Search successful"),
+//            @ApiResponse(code = 400, message = "The request cannot be fulfilled because of wrong syntax"),
+//            @ApiResponse(code = 404, message = "Server has not found anything matching the requested URI! No users found!"),
+//            @ApiResponse(code = 503, message = "Server error. Can't get any reports from data base."),
+//    })
+//    public ResponseEntity<Object> findTest() {
+//
+//        List<SearchPositiveReportQueryView> byAll = subjectEntityQueryRepository.findAllBy();
+//        SearchReportDetailsQueryView oneBy = subjectEntityQueryRepository.findOneById(1l);
+//        return ResponseEntity.ok().body(oneBy);
+//    }
 
 }

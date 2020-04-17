@@ -40,6 +40,11 @@ class ArchReportQueryFacadeImpl implements ArchReportQueryFacade {
         return searchPositiveReportQueryViewList;
     }
 
+    @Override
+    public SearchReportDetailsQueryView findSearchReportDetailsById(Long id) {
+        return subjectQueryRepository.findOneById(id);
+    }
+
     @Override //todo zmiana na view
     public CheckReportQueryDto findCheckReportById(Long id) {
         return reportSyncRequestEntityRepository.findCheckReportById(id);
