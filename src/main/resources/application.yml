@@ -42,17 +42,21 @@ spring:
     #   Database Settings
     ###
   datasource:
-    url: jdbc:h2:mem:whiteDb
-    username: sa
-    password:
+#    url: jdbc:h2:mem:whiteDb
+    url: jdbc:mariadb://192.168.0.115:3306/whiteDb
+    username: whiteSlaveApp
+    password: test1234
     driver:
-      driver-class-name: org.h2.Driver
+#      driver-class-name: org.h2.Driver
+      driver-class-name: rg.mariadb.jdbc.Driver
   jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
+#    database-platform: org.hibernate.dialect.H2Dialect
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+#    database-platform: org.hibernate.dialect.MySQL5Dialect
     generate-ddl: true
     hibernate:
-#      ddl-auto=create: create-drop
-      ddl-auto=create: update
+      ddl-auto=create: create-drop
+#      ddl-auto=create: update
     show-sql: true
     properties:
       hibernate:

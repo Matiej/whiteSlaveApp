@@ -1,0 +1,12 @@
+
+
+SELECT CONCAT("ALTER TABLE ", TABLE_SCHEMA, '.', TABLE_NAME," COLLATE  utf8_general_ci;") AS    ExecuteTheString
+FROM INFORMATION_SCHEMA.TABLES
+WHERE TABLE_SCHEMA="whiteDb"
+AND TABLE_TYPE="BASE TABLE";
+Better option to change also collation of varchar columns inside table also
+
+SELECT CONCAT('ALTER TABLE `', TABLE_NAME,'` CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci;') AS    mySQL
+FROM INFORMATION_SCHEMA.TABLES
+WHERE TABLE_SCHEMA= "myschema"
+AND TABLE_TYPE="BASE TABLE"
