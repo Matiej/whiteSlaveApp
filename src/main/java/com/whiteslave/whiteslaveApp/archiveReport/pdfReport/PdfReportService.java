@@ -1,10 +1,10 @@
 package com.whiteslave.whiteslaveApp.archiveReport.pdfReport;
 
 import be.quodlibet.boxable.BaseTable;
-import com.whiteslave.whiteslaveApp.reportSync.domain.CheckGovResponseReportSync;
-import com.whiteslave.whiteslaveApp.reportSync.domain.GovResponseReportSync;
+import com.whiteslave.whiteslaveApp.reportSync.domain.CheckGovResponse;
+import com.whiteslave.whiteslaveApp.reportSync.domain.GovResponse;
 import com.whiteslave.whiteslaveApp.reportSync.domain.ReportSyncRequest;
-import com.whiteslave.whiteslaveApp.reportSync.domain.SearchGovResponseReportSync;
+import com.whiteslave.whiteslaveApp.reportSync.domain.SearchGovResponse;
 import com.whiteslave.whiteslaveApp.reportSync.domain.enums.ReportType;
 import com.whiteslave.whiteslaveApp.reportSync.domain.enums.SearchResult;
 import lombok.extern.slf4j.Slf4j;
@@ -64,15 +64,15 @@ public class PdfReportService {
         File file = null;
 
         try {
-            if (Optional.ofNullable(reportSyncRequest.getGovResponseReportSync()).isPresent()
-                    && reportSyncRequest.getGovResponseReportSync() instanceof CheckGovResponseReportSync) {
+            if (Optional.ofNullable(reportSyncRequest.getGovResponse()).isPresent()
+                    && reportSyncRequest.getGovResponse() instanceof CheckGovResponse) {
                 reportTile = CHECK_REPORT_TITLE;
                 createDir(Path.of(CHECK_FILE_DEST_PATH));
                 file = new File(CHECK_FILE_DEST_PATH + File.separator + prepareFileName(reportSyncRequest) + FILE_EXT);
                 log.info("FLIE READY: " + file.getPath());
-            } else if (Optional.ofNullable(reportSyncRequest.getGovResponseReportSync()).isPresent()
-                    && reportSyncRequest.getGovResponseReportSync() instanceof SearchGovResponseReportSync) {
-                if (((SearchGovResponseReportSync) reportSyncRequest.getGovResponseReportSync()).getSubjectResponseList().size() > 1) {
+            } else if (Optional.ofNullable(reportSyncRequest.getGovResponse()).isPresent()
+                    && reportSyncRequest.getGovResponse() instanceof SearchGovResponse) {
+                if (((SearchGovResponse) reportSyncRequest.getGovResponse()).getSubjectResponseList().size() > 1) {
                     reportTile = SEARCH_MULTIPLE_REPORTS_TITLE;
                 } else {
                     reportTile = SEARCH_REPORT_TITLE;
@@ -83,11 +83,11 @@ public class PdfReportService {
             }
             startGeneratePdf(file, reportTile, reportSyncRequest);
             //todo czy nazwe raportu zapisywac o to jest pytanie
-            log.info(String.format("Report %s generated successful for request id %s. Report file name: %s", reportTile, reportSyncRequest.getGovResponseReportSync().getRequestId(),
+            log.info(String.format("Report %s generated successful for request id %s. Report file name: %s", reportTile, reportSyncRequest.getGovResponse().getRequestId(),
                     Optional.ofNullable(file).map(File::getName).orElse("Cant find file name!")));
         } catch (IOException e) {
-            String requestID = Optional.ofNullable(reportSyncRequest.getGovResponseReportSync())
-                    .map(GovResponseReportSync::getRequestId)
+            String requestID = Optional.ofNullable(reportSyncRequest.getGovResponse())
+                    .map(GovResponse::getRequestId)
                     .orElse("requestID_ERROR");
             log.error(String.format("ERROR When try to generate %s, request date: %s, responseID: %s", reportTile, reportSyncRequest.getRequestDate().toString(), requestID), e);
             e.printStackTrace();
@@ -99,7 +99,7 @@ public class PdfReportService {
     private String prepareFileName(ReportSyncRequest reportSyncRequest) {
         String requestDate = reportSyncRequest.getRequestDate().toString().replaceAll(":", "-");
         String reportTypeName = reportSyncRequest.getReportType().equals(ReportType.CHECK) ? CHECK_REPORT_FILE_NAME : SEARCH_REPORT_FILE_NAME;
-        String requestId = Optional.ofNullable(reportSyncRequest.getGovResponseReportSync()).map(GovResponseReportSync::getRequestId).orElse("NO_REQUEST_ID");
+        String requestId = Optional.ofNullable(reportSyncRequest.getGovResponse()).map(GovResponse::getRequestId).orElse("NO_REQUEST_ID");
         String reportResult = reportSyncRequest.getSearchResult().equals(SearchResult.NEGATIVE) ? "NEGATYWNY" : "POZYTYWNY";
         String na = "NA_DZIEN";
         String reportDate = reportSyncRequest.getReportDate().toString();
@@ -189,7 +189,7 @@ public class PdfReportService {
         contentStream.close();
 
         //add pages numbers
-        String footerPageNumeric = "|" + RESPONSE_ID.concat(reportSyncRequest.getGovResponseReportSync().getRequestId()) + "|" + NUMERIC_PAGE_FORMAT;
+        String footerPageNumeric = "|" + RESPONSE_ID.concat(reportSyncRequest.getGovResponse().getRequestId()) + "|" + NUMERIC_PAGE_FORMAT;
         addPageNumbers(document, footerPageNumeric, xNumbericPagePosition, yNumbericPagePosition);
 
         //save and close doc

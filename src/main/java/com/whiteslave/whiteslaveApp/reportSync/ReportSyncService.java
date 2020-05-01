@@ -3,17 +3,20 @@ package com.whiteslave.whiteslaveApp.reportSync;
 import com.whiteslave.whiteslaveApp.archiveReport.ArchReportService;
 import com.whiteslave.whiteslaveApp.govRequestReport.checkReport.domain.dto.CheckReportDto;
 import com.whiteslave.whiteslaveApp.govRequestReport.searchReport.domain.dto.SearchReportDto;
-import com.whiteslave.whiteslaveApp.reportSync.domain.GovResponseReportSync;
+import com.whiteslave.whiteslaveApp.reportSync.domain.GovResponse;
 import com.whiteslave.whiteslaveApp.reportSync.domain.ReportSyncRequest;
-import com.whiteslave.whiteslaveApp.reportSync.domain.SearchGovResponseReportSync;
+import com.whiteslave.whiteslaveApp.reportSync.domain.SearchGovResponse;
 import com.whiteslave.whiteslaveApp.reportSync.domain.SubjectResponse;
 import com.whiteslave.whiteslaveApp.reportSync.domain.enums.SearchResult;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.HibernateException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,6 +36,7 @@ class ReportSyncService {
         archReportService.saveReport(reportSyncRequest);
     }
 
+    @Transactional
     public void syncToPDFAndSaveSearchReport(SearchReportDto searchReportDto, String... requestParams) throws HibernateException {
         ReportSyncRequest reportSyncRequest = govReportDto2ReportSyncRequestConverter.searchReportDtoConvertToReportSyncConverter(searchReportDto, requestParams);
         File file = archReportService.generateReportPdf(reportSyncRequest);
@@ -44,10 +48,10 @@ class ReportSyncService {
     //znalazienie w grupowym zapytaniu search (wiele nipow lub wiele regonow) zapytan negatywnych.
     // W response z rzadowego serwera po prostu puste parametry przychodza. Chce je zapisc do bazy jako sync odrebny.
     // Dla zapytan pojedynczych nie ma problemu.
-    //todo moze jakis refaktor
+    //todo moze jakis refaktor przeniesc do convertera aby robil pozytwyne i negatywne
     private List<ReportSyncRequest> getNegativeRequest(ReportSyncRequest reportSyncRequest) {
         List<ReportSyncRequest> negativeList = new ArrayList<>();
-        SearchGovResponseReportSync govResponseReportSync = (SearchGovResponseReportSync) reportSyncRequest.getGovResponseReportSync();
+        SearchGovResponse govResponseReportSync = (SearchGovResponse) reportSyncRequest.getGovResponse();
         List<SubjectResponse> subjectResponseList = govResponseReportSync.getSubjectResponseList();
 
         if (null != subjectResponseList && subjectResponseList.size() > 1) {
@@ -84,8 +88,8 @@ class ReportSyncService {
     private ReportSyncRequest generateReportSync(String paramType, String
             params, ReportSyncRequest reportToupdate) {
 
-        SearchGovResponseReportSync govResponseReportSync = (SearchGovResponseReportSync) reportToupdate.getGovResponseReportSync();
-        GovResponseReportSync negativGovResponseReportySync = new SearchGovResponseReportSync(
+        SearchGovResponse govResponseReportSync = (SearchGovResponse) reportToupdate.getGovResponse();
+        GovResponse negativGovResponseReportySync = new SearchGovResponse(
                     govResponseReportSync.getRequestId(),
                     new ArrayList<>());
 
@@ -97,7 +101,7 @@ class ReportSyncService {
                 .requestNip(reportToupdate.getRequestNip())
                 .requestRegon(reportToupdate.getRequestRegon())
                 .searchResult(SearchResult.NEGATIVE)
-                .govResponseReportSync(negativGovResponseReportySync)
+                .govResponse(negativGovResponseReportySync)
                 .build();
 
         switch (paramType) {

@@ -43,7 +43,7 @@ public class ReportSyncRequestEntity implements Serializable {
     @OneToOne(cascade = CascadeType.ALL)
 //    @MapsId
     @JoinColumn(name = "RSY_RESP_ID")
-    private ResponseReportEntity responseReportEntity;
+    private GovResponseEntity govResponseEntity;
 
     private void setId(Long id) {
         this.id = id;

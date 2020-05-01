@@ -10,10 +10,10 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
-class SearchReportDto2SearchGovReportSyncConverter {
+class SearchReportDto2SearchGovResponseConverter {
 
-    public SearchGovResponseReportSync convertToSearchGovResponseReportSync(SearchReportDto searchReportDto) {
-        SearchGovResponseReportSync reportSync = SearchGovResponseReportSync.builder()
+    public SearchGovResponse convertToSearchGovResponseReportSync(SearchReportDto searchReportDto) {
+        SearchGovResponse reportSync = SearchGovResponse.builder()
                 .requestId(searchReportDto.getRequestId())
                 .subjectResponseList(convertSubjectDto2SubjectResponse(searchReportDto.getSubjectDtoList()))
                 .build();

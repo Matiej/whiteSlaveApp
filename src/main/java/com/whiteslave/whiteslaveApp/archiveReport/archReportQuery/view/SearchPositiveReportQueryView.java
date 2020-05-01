@@ -8,45 +8,46 @@ import java.time.LocalDateTime;
 public interface SearchPositiveReportQueryView extends ArchReportQueryView {
 
     @Override
-    @Value("#{target.searchResponseReportEntity.requestId}")
+    @Value("#{target.govSearchResponseEntity.requestId}")
     String getRequestId();
 
     @Override
     @Value("#{target.id}")
+//    @Value("#{target.govResponseEntity.id}")
     Long getId();
 
     @Override
-    @Value("#{target.searchResponseReportEntity.reportSyncRequestEntity.requestDate}")
+    @Value("#{target.govSearchResponseEntity.reportSyncRequestEntity.requestDate}")
     LocalDateTime getRequestDate();
 
     @Override
-    @Value("#{target.searchResponseReportEntity.reportSyncRequestEntity.reportDate}")
+    @Value("#{target.govSearchResponseEntity.reportSyncRequestEntity.reportDate}")
     LocalDate getReportDate();
 
     @Override
-    @Value("#{target.searchResponseReportEntity.reportSyncRequestEntity.pdfFileName}")
+    @Value("#{target.govSearchResponseEntity.reportSyncRequestEntity.pdfFileName}")
     String getPdfFileName();
 
     @Override
-    @Value("#{target.searchResponseReportEntity.reportSyncRequestEntity.searchResult}")
+    @Value("#{target.govSearchResponseEntity.reportSyncRequestEntity.searchResult}")
     String getSearchResult();
 
     @Override
-    @Value("#{target.searchResponseReportEntity.reportSyncRequestEntity.requestNip}")
+    @Value("#{target.govSearchResponseEntity.reportSyncRequestEntity.requestNip}")
     String getRequestNip();
 
     @Override
-    @Value("#{target.searchResponseReportEntity.reportSyncRequestEntity.requestRegon}")
+    @Value("#{target.govSearchResponseEntity.reportSyncRequestEntity.requestRegon}")
     String getRequestRegon();
 
     @Override
-    @Value("#{target.searchResponseReportEntity.reportSyncRequestEntity.requestBankAccount}")
+    @Value("#{target.govSearchResponseEntity.reportSyncRequestEntity.requestBankAccount}")
     String getRequestBankAccount();
 
-    @Value("#{target.searchResponseReportEntity.reportSyncRequestEntity.id}")
+    @Value("#{target.govSearchResponseEntity.reportSyncRequestEntity.id}")
     Long getSyncRequestEntityId();
 
-    @Value("#{target.searchResponseReportEntity.subjectNo}")
+    @Value("#{target.govSearchResponseEntity.subjectNo}")
     String getSubjectNo();
 
     String getName();

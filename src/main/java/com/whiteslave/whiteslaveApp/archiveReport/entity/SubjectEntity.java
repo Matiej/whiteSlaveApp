@@ -74,8 +74,8 @@ public class SubjectEntity {
     private Boolean hasVirtualAccounts;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "SUB_RES_ID")
-    private SearchResponseReportEntity searchResponseReportEntity;
+    @JoinColumn(name = "SUB_GOV_RES_ID")
+    private GovSearchGovResponseEntity govSearchResponseEntity;
 
     @OneToMany(
             cascade = CascadeType.ALL,

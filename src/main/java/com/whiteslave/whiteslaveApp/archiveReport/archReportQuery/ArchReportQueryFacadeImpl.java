@@ -36,7 +36,7 @@ class ArchReportQueryFacadeImpl implements ArchReportQueryFacade {
         List<SearchNegativeReportQueryView> searchNegativeReportQueryViewList = reportSyncRequestEntityRepository
                 .findAllByReportTypeAndSearchResult(ReportType.SEARCH, SearchResult.NEGATIVE);
         searchPositiveReportQueryViewList.addAll(searchNegativeReportQueryViewList);
-        searchPositiveReportQueryViewList.sort(Comparator.comparing(SearchPositiveReportQueryView::getId));
+        searchPositiveReportQueryViewList.sort(Comparator.comparing(SearchPositiveReportQueryView::getRequestDate));
         return searchPositiveReportQueryViewList;
     }
 

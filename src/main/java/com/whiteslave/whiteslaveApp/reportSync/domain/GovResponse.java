@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class GovResponseReportSync {
+public class GovResponse {
 
     private String requestId;
 

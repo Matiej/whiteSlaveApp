@@ -5,9 +5,9 @@ import org.springframework.beans.factory.annotation.Value;
 public interface CheckReportQueryView extends ArchReportQueryView {
 
     @Override
-    @Value("#{target.responseReportEntity.requestId}")
+    @Value("#{target.govResponseEntity.requestId}")
     String getRequestId();
 
-    @Value("#{target.responseReportEntity.accountAssigned}")
+    @Value("#{target.govResponseEntity.accountAssigned}")
     String getAccountAssigned();
 }

@@ -22,25 +22,25 @@ class ReportSyncRequest2EntityConverter {
         entity.setRequestRegon(reportSyncRequest.getRequestRegon());
         entity.setRequestBankAccount(reportSyncRequest.getRequestBankAccount());
 
-        GovResponseReportSync govResponseReportSync = reportSyncRequest.getGovResponseReportSync();
-        if (govResponseReportSync instanceof CheckGovResponseReportSync) {
-            entity.setResponseReportEntity(covertCheckGovReportSync2ReportEntity((CheckGovResponseReportSync) govResponseReportSync));
+        GovResponse govResponse = reportSyncRequest.getGovResponse();
+        if (govResponse instanceof CheckGovResponse) {
+            entity.setGovResponseEntity(covertCheckGovReportSync2ReportEntity((CheckGovResponse) govResponse));
         }
-        if (govResponseReportSync instanceof SearchGovResponseReportSync) {
-            entity.setResponseReportEntity(convertSearchGovReportSync2ReportEntity((SearchGovResponseReportSync) govResponseReportSync));
+        if (govResponse instanceof SearchGovResponse) {
+            entity.setGovResponseEntity(convertSearchGovReportSync2ReportEntity((SearchGovResponse) govResponse));
         }
         return entity;
     }
 
-    private CheckResponseReportEntity covertCheckGovReportSync2ReportEntity(CheckGovResponseReportSync checkGovReportSync) {
-        CheckResponseReportEntity entity = new CheckResponseReportEntity();
+    private GovCheckGovResponseEntity covertCheckGovReportSync2ReportEntity(CheckGovResponse checkGovReportSync) {
+        GovCheckGovResponseEntity entity = new GovCheckGovResponseEntity();
         entity.setRequestId(checkGovReportSync.getRequestId());
         entity.setAccountAssigned(checkGovReportSync.getAccountAssigned());
         return entity;
     }
 
-    private SearchResponseReportEntity convertSearchGovReportSync2ReportEntity(SearchGovResponseReportSync searchGovResponseReportSync) {
-        SearchResponseReportEntity entity = new SearchResponseReportEntity();
+    private GovSearchGovResponseEntity convertSearchGovReportSync2ReportEntity(SearchGovResponse searchGovResponseReportSync) {
+        GovSearchGovResponseEntity entity = new GovSearchGovResponseEntity();
         entity.setRequestId(searchGovResponseReportSync.getRequestId());
         entity.setSubjectNo(searchGovResponseReportSync.getSubjectResponseList().size());
         List<SubjectEntity> subjectEntityList = convertSubject2Entity(searchGovResponseReportSync.getSubjectResponseList(),entity);
@@ -48,7 +48,7 @@ class ReportSyncRequest2EntityConverter {
         return entity;
     }
 
-    private List<SubjectEntity> convertSubject2Entity(List<SubjectResponse> subjectResponseList, SearchResponseReportEntity responseReportEntity) {
+    private List<SubjectEntity> convertSubject2Entity(List<SubjectResponse> subjectResponseList, GovSearchGovResponseEntity responseReportEntity) {
         return Optional.ofNullable(subjectResponseList)
                 .map(subjectResponses -> subjectResponses.stream()
                         .map(sub -> SubjectEntity.builder()
@@ -72,7 +72,7 @@ class ReportSyncRequest2EntityConverter {
                                 .removalDate(sub.getRemovalDate())
                                 .hasVirtualAccounts(sub.getHasVirtualAccounts())
                                 .bankAccountEntityList(convertBankAccount2Entity(sub.getAccountNumbersList()))
-                                .searchResponseReportEntity(responseReportEntity)
+                                .govSearchResponseEntity(responseReportEntity)
                                 .build())
                         .collect(Collectors.toList()))
                 .orElse(new ArrayList<>());

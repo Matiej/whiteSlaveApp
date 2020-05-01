@@ -30,7 +30,7 @@ class ArchReportServiceImpl implements ArchReportService {
             ReportSyncRequestEntity reportSyncRequestEntity = converter.convert2Entity(reportSyncRequest);
             ReportSyncRequestEntity savedReportSyncRequestEntity = repository.save(reportSyncRequestEntity);
             String correctInfoMessage = String.format("Report saved correct. ID: %d, type: %s, gov request ID: %s", savedReportSyncRequestEntity.getId(),
-                    savedReportSyncRequestEntity.getReportType().name(), savedReportSyncRequestEntity.getResponseReportEntity().getRequestId());
+                    savedReportSyncRequestEntity.getReportType().name(), savedReportSyncRequestEntity.getGovResponseEntity().getRequestId());
             log.info(correctInfoMessage);
             return reportSyncRequest;
         } catch (HibernateException e) {

@@ -8,12 +8,12 @@ import java.util.List;
 
 @Getter
 @EqualsAndHashCode(callSuper = false)
-public class SearchGovResponseReportSync extends GovResponseReportSync {
+public class SearchGovResponse extends GovResponse {
 
     private List<SubjectResponse> subjectResponseList;
 
     @Builder
-    public SearchGovResponseReportSync(String requestId, List<SubjectResponse> subjectResponseList) {
+    public SearchGovResponse(String requestId, List<SubjectResponse> subjectResponseList) {
         super(requestId);
         this.subjectResponseList = subjectResponseList;
     }

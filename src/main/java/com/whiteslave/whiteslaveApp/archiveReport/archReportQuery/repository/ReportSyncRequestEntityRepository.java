@@ -16,13 +16,13 @@ import java.util.List;
 public interface ReportSyncRequestEntityRepository extends JpaRepository<ReportSyncRequestEntity, Long> {
 
     @Query("select new com.whiteslave.whiteslaveApp.archiveReport.archReportQuery.dto.CheckReportQueryDto(r.id, " +
-            "r.responseReportEntity.requestId, r.responseReportEntity.accountAssigned, r.requestDate, r.reportDate, " +
+            "r.govResponseEntity.requestId, r.govResponseEntity.accountAssigned, r.requestDate, r.reportDate, " +
             "r.pdfFileName, r.searchResult, r.reportType , r.requestNip, r.requestRegon, r.requestBankAccount) " +
             "FROM ReportSyncRequestEntity r WHERE r.reportType = 'CHECK'")
     List<CheckReportQueryDto> findAllCheckReports();
 
     @Query("select new com.whiteslave.whiteslaveApp.archiveReport.archReportQuery.dto.CheckReportQueryDto(r.id, " +
-            "r.responseReportEntity.requestId, r.responseReportEntity.accountAssigned, r.requestDate, r.reportDate, " +
+            "r.govResponseEntity.requestId, r.govResponseEntity.accountAssigned, r.requestDate, r.reportDate, " +
             "r.pdfFileName, r.searchResult, r.reportType , r.requestNip, r.requestRegon, r.requestBankAccount) " +
             "FROM ReportSyncRequestEntity r WHERE r.reportType = 'CHECK' AND r.id = :id")
     CheckReportQueryDto findCheckReportById(Long id);

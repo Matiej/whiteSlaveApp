@@ -8,15 +8,15 @@ import java.util.List;
 
 @Getter
 @Setter
-@Entity(name = "SearchResponseReportEntity")
+@Entity(name = "GovSearchGovResponseEntity")
 @DiscriminatorValue("SEARCH_REPORT")
-public class SearchResponseReportEntity extends ResponseReportEntity {
+public class GovSearchGovResponseEntity extends GovResponseEntity {
 
-    @Column(name = "RES_SCH_NO_OF_SUBJECT")
+    @Column(name = "GOV_RES_NO_OF_SUBJECT")
     private Integer subjectNo;
 
     @OneToMany(
-            mappedBy = "searchResponseReportEntity",
+            mappedBy = "govSearchResponseEntity",
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )

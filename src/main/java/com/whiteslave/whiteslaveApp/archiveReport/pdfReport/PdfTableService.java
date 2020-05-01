@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 class PdfTableService {
-
+//todo refactor. Zbudowanie fabryki i abstrakci dla check i search. 
     private static final String POSITIVE_REPORT = "POZYTYWNIE";
     private static final String NEGATIVE_REPORT = "NEGATYWNIE";
     private static final String BRAK_DANYCH = "BRAK_DANYCH";
@@ -48,9 +48,9 @@ class PdfTableService {
         prepareTableRequest(table, reportSyncRequest, polishFont);
 
         //response header
-        if (null != reportSyncRequest.getGovResponseReportSync() && reportSyncRequest.getGovResponseReportSync() instanceof CheckGovResponseReportSync) {
+        if (null != reportSyncRequest.getGovResponse() && reportSyncRequest.getGovResponse() instanceof CheckGovResponse) {
             prepareTableCheckResponse(table, reportSyncRequest, polishFont);
-        } else if (null != reportSyncRequest.getGovResponseReportSync() && reportSyncRequest.getGovResponseReportSync() instanceof SearchGovResponseReportSync) {
+        } else if (null != reportSyncRequest.getGovResponse() && reportSyncRequest.getGovResponse() instanceof SearchGovResponse) {
             prepareTableSearchResponse(table, reportSyncRequest, polishFont);
         }
         return table;
@@ -136,7 +136,7 @@ class PdfTableService {
 
     private void prepareTableCheckResponse(BaseTable table, ReportSyncRequest reportSyncRequest, PDType0Font polishFont) {
 
-        CheckGovResponseReportSync govResponseReportSync = (CheckGovResponseReportSync) reportSyncRequest.getGovResponseReportSync();
+        CheckGovResponse govResponseReportSync = (CheckGovResponse) reportSyncRequest.getGovResponse();
         String reposneIdContent = String.format("Identyfikator zapytania: %s", govResponseReportSync.getRequestId());
         String statusVAT = String.format("Podatnik VAT czynny: %s", govResponseReportSync.getAccountAssigned());
         String veryficationDate = String.format("Weryfikacja na dzien: %s", reportSyncRequest.getReportDate().toString());
@@ -174,7 +174,7 @@ class PdfTableService {
     }
 
     private void prepareTableSearchResponse(BaseTable table, ReportSyncRequest reportSyncRequest, PDType0Font polishFont) {
-        SearchGovResponseReportSync govResponseReportSync = (SearchGovResponseReportSync) reportSyncRequest.getGovResponseReportSync();
+        SearchGovResponse govResponseReportSync = (SearchGovResponse) reportSyncRequest.getGovResponse();
         String reposneIdContent = String.format("Identyfikator zapytania: %s", govResponseReportSync.getRequestId());
         String veryficationDate = String.format("Weryfikacja na dzien: %s", reportSyncRequest.getReportDate().toString());
 
@@ -356,7 +356,7 @@ class PdfTableService {
                 .or(() -> Optional.ofNullable(reportSyncRequest.getRequestRegon()).map(r -> r.split(",")))
                 .or(() -> Optional.ofNullable(reportSyncRequest.getRequestBankAccount()).map(b -> b.split(",")))
                 .orElseThrow(() -> new Exception(String.format("Can not prepare PDF report. No request params found for id: %s",
-                        reportSyncRequest.getGovResponseReportSync().getRequestId()))));
+                        reportSyncRequest.getGovResponse().getRequestId()))));
         return multipleParams.stream()
                 .map(String::trim)
                 .filter(p -> subjectResponseList.stream().map(SubjectResponse::getNip).noneMatch(p::equals))

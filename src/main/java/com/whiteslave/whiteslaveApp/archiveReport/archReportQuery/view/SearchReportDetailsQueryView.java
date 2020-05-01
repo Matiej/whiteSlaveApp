@@ -2,7 +2,6 @@ package com.whiteslave.whiteslaveApp.archiveReport.archReportQuery.view;
 
 import com.whiteslave.whiteslaveApp.archiveReport.archReportQuery.dto.BankAccountQueryDto;
 import com.whiteslave.whiteslaveApp.archiveReport.archReportQuery.dto.CompanyPersonsQueryDto;
-import com.whiteslave.whiteslaveApp.archiveReport.entity.RepresentativesResponseEntity;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.time.LocalDate;
@@ -12,7 +11,7 @@ import java.util.List;
 public interface SearchReportDetailsQueryView extends SearchPositiveReportQueryView {
 
     @Override
-    @Value("#{target.searchResponseReportEntity.requestId}")
+    @Value("#{target.govSearchResponseEntity.requestId}")
     String getRequestId();
 
     @Override
@@ -20,42 +19,47 @@ public interface SearchReportDetailsQueryView extends SearchPositiveReportQueryV
     Long getId();
 
     @Override
-    @Value("#{target.searchResponseReportEntity.reportSyncRequestEntity.requestDate}")
+    @Value("#{target.govSearchResponseEntity.reportSyncRequestEntity.requestDate}")
     LocalDateTime getRequestDate();
 
     @Override
-    @Value("#{target.searchResponseReportEntity.reportSyncRequestEntity.reportDate}")
+    @Value("#{target.govSearchResponseEntity.reportSyncRequestEntity.reportDate}")
     LocalDate getReportDate();
 
     @Override
-    @Value("#{target.searchResponseReportEntity.reportSyncRequestEntity.pdfFileName}")
+    @Value("#{target.govSearchResponseEntity.reportSyncRequestEntity.pdfFileName}")
     String getPdfFileName();
 
     @Override
-    @Value("#{target.searchResponseReportEntity.reportSyncRequestEntity.searchResult}")
+    @Value("#{target.govSearchResponseEntity.reportSyncRequestEntity.searchResult}")
     String getSearchResult();
 
     @Override
-    @Value("#{target.searchResponseReportEntity.reportSyncRequestEntity.requestNip}")
+    @Value("#{target.govSearchResponseEntity.reportSyncRequestEntity.requestNip}")
     String getRequestNip();
 
     @Override
-    @Value("#{target.searchResponseReportEntity.reportSyncRequestEntity.requestRegon}")
+    @Value("#{target.govSearchResponseEntity.reportSyncRequestEntity.requestRegon}")
     String getRequestRegon();
 
     @Override
-    @Value("#{target.searchResponseReportEntity.reportSyncRequestEntity.requestBankAccount}")
+    @Value("#{target.govSearchResponseEntity.reportSyncRequestEntity.requestBankAccount}")
     String getRequestBankAccount();
 
-    @Value("#{target.searchResponseReportEntity.reportSyncRequestEntity.id}")
+    @Value("#{target.govSearchResponseEntity.reportSyncRequestEntity.id}")
     Long getSyncRequestEntityId();
 
-    @Value("#{target.searchResponseReportEntity.subjectNo}")
+    @Value("#{target.govSearchResponseEntity.subjectNo}")
     String getSubjectNo();
 
+    @Override
     String getName();
 
+    @Override
     String getStatusVat();
+
+    @Value("#{target.govSearchResponseEntity.reportSyncRequestEntity.reportType}")
+    String getReportType();
 
     @Value("#{@entity2DtoQueryViewConverter.convert2CompanyPersonsQueryDto(target.representativesEntityList)}")
     List<CompanyPersonsQueryDto> getRepresentativesDtoList();

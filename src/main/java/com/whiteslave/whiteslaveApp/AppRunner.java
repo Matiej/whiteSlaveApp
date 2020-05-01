@@ -49,7 +49,7 @@ public class AppRunner implements CommandLineRunner {
         }
 
         public void pdfTest () {
-            GovResponseReportSync res = new CheckGovResponseReportSync("sdqwsr41211000", "TAK");
+            GovResponse res = new CheckGovResponse("sdqwsr41211000", "TAK");
 
             CompanyPersons companyPersons = new CompanyPersons();
             companyPersons.setCompanyName("COmapnyNN SPZ");
@@ -87,7 +87,7 @@ public class AppRunner implements CommandLineRunner {
                     .build();
 
 
-            GovResponseReportSync searchRes = new SearchGovResponseReportSync("search41211000", List.of(s1));
+            GovResponse searchRes = new SearchGovResponse("search41211000", List.of(s1));
 
             ReportSyncRequest r = ReportSyncRequest.builder()
                     .requestDate(LocalDateTime.now().withNano(0))
@@ -97,7 +97,7 @@ public class AppRunner implements CommandLineRunner {
                     .requestNip("111811818")
 //                .requestRegon("012442100")
                     .requestBankAccount("1231231232168954564454645645")
-                    .govResponseReportSync(res)
+                    .govResponse(res)
                     .build();
 
             ReportSyncRequest searchRequest = ReportSyncRequest.builder()
@@ -109,7 +109,7 @@ public class AppRunner implements CommandLineRunner {
 //                .requestRegon("012442100,00000011112222,21412412412,1241243532523")
                     .requestRegon("00000011112222, 00000011112222, 921202222")
 //                .requestBankAccount("1231231232168954564454645645")
-                    .govResponseReportSync(searchRes)
+                    .govResponse(searchRes)
                     .build();
 
 
