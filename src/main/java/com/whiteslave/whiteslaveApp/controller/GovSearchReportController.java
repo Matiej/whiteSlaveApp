@@ -123,7 +123,7 @@ public class GovSearchReportController {
             @ApiResponse(code = 503, message = "Data Base server error. Can't get or save any report."),
     })
     @ApiImplicitParams({
-            @ApiImplicitParam(required = true, name = "bankAccounts", value = "Up to 30 regon numbers separated by a comma. " +
+            @ApiImplicitParam(required = true, name = "regons", value = "Up to 30 regon numbers separated by a comma. " +
                     "Without dashes and spaces.",
                     dataTypeClass = String.class, paramType = "query"),
             @ApiImplicitParam(required = true, name = "date", value = "date of review",

@@ -29,7 +29,7 @@ public class WhtieSlaveExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler({MfGovException.class})
-    public final ResponseEntity<Object> handleMfGovExceptionnException(Exception ex, WebRequest request) {
+    public final ResponseEntity<Object> handleMfGovExceptionnException(MfGovException ex, WebRequest request) {
         ExceptionHandlerResponse exceptionResponse = getExceptionHandlerResponse(ex, request);
         log.error("MfGovException error message details ==> ", ex);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exceptionResponse);

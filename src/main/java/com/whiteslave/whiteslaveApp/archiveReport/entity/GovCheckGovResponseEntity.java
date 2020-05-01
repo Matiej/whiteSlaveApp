@@ -9,11 +9,11 @@ import javax.persistence.Entity;
 
 @Getter
 @Setter
-@Entity(name = "CheckResponseReportEntity")
+@Entity(name = "GovCheckGovResponseEntity")
 @DiscriminatorValue("CHECK_REPORT")
-public class CheckResponseReportEntity extends ResponseReportEntity {
+public class GovCheckGovResponseEntity extends GovResponseEntity {
 
-    @Column(name = "RES_CCH_ACC_ASSIGNED")
+    @Column(name = "GOV_RES_ACC_ASSIGNED")
     private String accountAssigned;
 
 }

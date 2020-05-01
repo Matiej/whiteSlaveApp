@@ -4,12 +4,12 @@ import lombok.*;
 
 @Getter
 @EqualsAndHashCode(callSuper = false)
-public class CheckGovResponseReportSync extends GovResponseReportSync {
+public class CheckGovResponse extends GovResponse {
 
     private String accountAssigned;
 
     @Builder
-    public CheckGovResponseReportSync(String requestId, String accountAssigned) {
+    public CheckGovResponse(String requestId, String accountAssigned) {
         super(requestId);
         this.accountAssigned = accountAssigned;
     }

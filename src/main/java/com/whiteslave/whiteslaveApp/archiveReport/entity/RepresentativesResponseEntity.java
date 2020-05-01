@@ -1,17 +1,18 @@
 package com.whiteslave.whiteslaveApp.archiveReport.entity;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Getter
 @Setter
 @Entity
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "REPRESENTATIVES_RESPONSE")
-public class RepresentativesResponseEntity {
+public class RepresentativesResponseEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

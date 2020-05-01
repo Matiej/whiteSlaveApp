@@ -20,7 +20,7 @@ public class ReportSyncRequest {
     private LocalDate reportDate;
     private SearchResult searchResult;
     private ReportType reportType;
-    private GovResponseReportSync govResponseReportSync;
+    private GovResponse govResponse;
     private String requestNip;
     private String requestRegon;
     private String requestBankAccount;

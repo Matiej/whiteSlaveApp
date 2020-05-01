@@ -4,25 +4,26 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Getter
 @Entity(name = "ReportEntity")
-@Table(name = "REPORT_RESPONSE")
+@Table(name = "GOV_RESPONSE")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name="RES_TYPE",
         discriminatorType = DiscriminatorType.STRING)
-public abstract class ResponseReportEntity {
+public abstract class GovResponseEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "RES_ID")
+    @Column(name = "GOV_RES_ID")
     private Long id;
 
     @Setter
-    @Column(name = "RES_GOV_REQUEST_ID")
+    @Column(name = "GOV_RES_REQUEST_ID")
     private String requestId;
 
-    @OneToOne(mappedBy = "responseReportEntity",
+    @OneToOne(mappedBy = "govResponseEntity",
             cascade = CascadeType.ALL,
             orphanRemoval = true,
             fetch = FetchType.LAZY)

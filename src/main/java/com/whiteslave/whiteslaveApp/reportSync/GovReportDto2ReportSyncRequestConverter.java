@@ -14,14 +14,14 @@ import java.util.*;
 @Component
 class GovReportDto2ReportSyncRequestConverter {
 
-    private final CheckReportDto2CheckGovReportSyncConverter checkGovReportSyncConverter;
-    private final SearchReportDto2SearchGovReportSyncConverter searchGovReportSyncConverter;
+    private final CheckReportDto2CheckGovResponseConverter checkGovReportSyncConverter;
+    private final SearchReportDto2SearchGovResponseConverter searchGovReportSyncConverter;
     private final static String DATE = "DATE";
     private final static String NIP = "NIP";
     private final static String REGON = "REGON";
     private final static String BANK_ACCOUNT = "BANKACCOUNT";
 
-    GovReportDto2ReportSyncRequestConverter(CheckReportDto2CheckGovReportSyncConverter checkGovReportSyncConverter, SearchReportDto2SearchGovReportSyncConverter searchGovReportSyncConverter) {
+    GovReportDto2ReportSyncRequestConverter(CheckReportDto2CheckGovResponseConverter checkGovReportSyncConverter, SearchReportDto2SearchGovResponseConverter searchGovReportSyncConverter) {
         this.checkGovReportSyncConverter = checkGovReportSyncConverter;
         this.searchGovReportSyncConverter = searchGovReportSyncConverter;
     }
@@ -33,7 +33,7 @@ class GovReportDto2ReportSyncRequestConverter {
                 .reportDate(LocalDate.parse(params.get(DATE)))
                 .searchResult(checkReportDto.getAccountAssigned().equals("TAK") ? SearchResult.POSITIVE : SearchResult.NEGATIVE)
                 .reportType(ReportType.CHECK)
-                .govResponseReportSync(checkGovReportSyncConverter.convertToCheckGovReportSync(checkReportDto))
+                .govResponse(checkGovReportSyncConverter.convertToCheckGovReportSync(checkReportDto))
                 .requestNip(params.get(NIP))
                 .requestRegon(params.get(REGON))
                 .requestBankAccount(params.get(BANK_ACCOUNT))
@@ -48,7 +48,7 @@ class GovReportDto2ReportSyncRequestConverter {
                 .reportDate(LocalDate.parse(params.get(DATE)))
                 .searchResult(searchReportDto.getSubjectDtoList().size() > 0 ? SearchResult.POSITIVE : SearchResult.NEGATIVE)
                 .reportType(ReportType.SEARCH)
-                .govResponseReportSync(searchGovReportSyncConverter.convertToSearchGovResponseReportSync(searchReportDto))
+                .govResponse(searchGovReportSyncConverter.convertToSearchGovResponseReportSync(searchReportDto))
                 .requestNip(params.get(NIP))
                 .requestRegon(params.get(REGON))
                 .requestBankAccount(params.get(BANK_ACCOUNT))
