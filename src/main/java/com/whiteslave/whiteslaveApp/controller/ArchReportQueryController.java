@@ -1,8 +1,6 @@
 package com.whiteslave.whiteslaveApp.controller;
 
-import com.whiteslave.whiteslaveApp.archiveReport.archReportQuery.*;
-import com.whiteslave.whiteslaveApp.archiveReport.archReportQuery.dto.CheckReportQueryDto;
-import com.whiteslave.whiteslaveApp.archiveReport.archReportQuery.repository.SubjectEntityQueryRepository;
+import com.whiteslave.whiteslaveApp.archiveReport.archReportQuery.ArchReportQueryFacade;
 import com.whiteslave.whiteslaveApp.archiveReport.archReportQuery.view.CheckReportQueryView;
 import com.whiteslave.whiteslaveApp.archiveReport.archReportQuery.view.SearchPositiveReportQueryView;
 import com.whiteslave.whiteslaveApp.archiveReport.archReportQuery.view.SearchReportDetailsQueryView;
@@ -38,11 +36,11 @@ class ArchReportQueryController {
     }
 
     @GetMapping("/checkSyncReport")
-    @ApiOperation(value = "Check for quick company report by ID param saved in data base. Include query and gov response ", response = CheckReportQueryDto.class)
+    @ApiOperation(value = "Check for quick company report by ID param saved in data base. Include query and gov response ", response = CheckReportQueryView.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Search successful"),
             @ApiResponse(code = 400, message = "The request cannot be fulfilled because of wrong syntax"),
-            @ApiResponse(code = 404, message = "Server has not found anything matching the requested URI! No users found!"),
+            @ApiResponse(code = 404, message = "Server has not found anything matching the requested URI! No reports found!"),
             @ApiResponse(code = 503, message = "Server error. Can't get any reports from data base."),
     })
     @ApiImplicitParams({
@@ -50,7 +48,7 @@ class ArchReportQueryController {
                     dataTypeClass = String.class, paramType = "query")
     })
     public ResponseEntity<Object> findSyncCheckReportById(@RequestParam("id") Long id) {
-        CheckReportQueryDto checkReportById = archReportQueryFacade.findCheckReportById(id);
+        CheckReportQueryView checkReportById = archReportQueryFacade.findCheckReportTypeAndById(id);
         return ResponseEntity.ok().body(checkReportById);
     }
 
@@ -59,7 +57,7 @@ class ArchReportQueryController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Search successful"),
             @ApiResponse(code = 400, message = "The request cannot be fulfilled because of wrong syntax"),
-            @ApiResponse(code = 404, message = "Server has not found anything matching the requested URI! No users found!"),
+            @ApiResponse(code = 404, message = "Server has not found anything matching the requested URI! No reports found!"),
             @ApiResponse(code = 503, message = "Server error. Can't get any reports from data base."),
     })
     public ResponseEntity<Object> findAllSyncSearchReports() {
@@ -73,7 +71,7 @@ class ArchReportQueryController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Search successful"),
             @ApiResponse(code = 400, message = "The request cannot be fulfilled because of wrong syntax"),
-            @ApiResponse(code = 404, message = "Server has not found anything matching the requested URI! No users found!"),
+            @ApiResponse(code = 404, message = "Server has not found anything matching the requested URI! No reports found!"),
             @ApiResponse(code = 503, message = "Server error. Can't get any reports from data base."),
     })
     @ApiImplicitParams({
@@ -85,7 +83,7 @@ class ArchReportQueryController {
         return ResponseEntity.ok().body(searchReportDetails);
     }
 
-//
+
 //    @GetMapping("/test")
 //    @ApiOperation(value = "TO TEST", response = SearchPositiveReportQueryView.class)
 //    @ApiResponses(value = {
@@ -94,11 +92,13 @@ class ArchReportQueryController {
 //            @ApiResponse(code = 404, message = "Server has not found anything matching the requested URI! No users found!"),
 //            @ApiResponse(code = 503, message = "Server error. Can't get any reports from data base."),
 //    })
-//    public ResponseEntity<Object> findTest() {
-//
-//        List<SearchPositiveReportQueryView> byAll = subjectEntityQueryRepository.findAllBy();
-//        SearchReportDetailsQueryView oneBy = subjectEntityQueryRepository.findOneById(1l);
-//        return ResponseEntity.ok().body(oneBy);
+//    @ApiImplicitParams({
+//            @ApiImplicitParam(readOnly = true, name = "id", value = "Check report ID",
+//                    dataTypeClass = String.class, paramType = "query")
+//    })
+//    public ResponseEntity<Object> findTest(@RequestParam("id") Long id) {
+//        CheckReportQueryView oneBY = archReportQueryFacade.findCheckReportTypeAndById(id);
+//        return ResponseEntity.ok().body(oneBY);
 //    }
 
 }

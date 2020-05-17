@@ -1,6 +1,5 @@
 package com.whiteslave.whiteslaveApp.archiveReport.archReportQuery;
 
-import com.whiteslave.whiteslaveApp.archiveReport.archReportQuery.dto.CheckReportQueryDto;
 import com.whiteslave.whiteslaveApp.archiveReport.archReportQuery.repository.ReportSyncRequestEntityRepository;
 import com.whiteslave.whiteslaveApp.archiveReport.archReportQuery.repository.SubjectEntityQueryRepository;
 import com.whiteslave.whiteslaveApp.archiveReport.archReportQuery.view.CheckReportQueryView;
@@ -22,14 +21,24 @@ class ArchReportQueryFacadeImpl implements ArchReportQueryFacade {
     private final SubjectEntityQueryRepository subjectQueryRepository;
     private final ReportSyncRequestEntityRepository reportSyncRequestEntityRepository;
 
-    /*
-    Lista pozytywnych search reports pobrana z Projekcji na klasę za pomocą JPA OPEN PROJECTION.
-    Poniedzielenie metod w celu przyspieszenia pobrania od strony bazy/
-    Zalozenie ze zdecydowanie wiecej pozytywnych bedzie jak negatywnych wyszukan.
+    @Override
+    public List<CheckReportQueryView> allCheckReports() {
+        return reportSyncRequestEntityRepository.findByReportType(ReportType.CHECK);
+    }
 
-    Lista negatywnych search erpots pobrana po prostu z repozytorium archReportQueryRepository i
-    przekonwertowana.
-     */
+    @Override
+    public CheckReportQueryView findCheckReportTypeAndById(Long id) {
+        return reportSyncRequestEntityRepository.findByReportTypeAndId(ReportType.CHECK, id);
+    }
+
+    /*
+Lista pozytywnych search reports pobrana z Projekcji na klasę za pomocą JPA OPEN PROJECTION.
+Poniedzielenie metod w celu przyspieszenia pobrania od strony bazy/
+Zalozenie ze zdecydowanie wiecej pozytywnych bedzie jak negatywnych wyszukan.
+
+Lista negatywnych search erpots pobrana po prostu z repozytorium archReportQueryRepository i
+przekonwertowana.
+ */
     @Override
     public List<SearchPositiveReportQueryView> allSearchReports() {
         List<SearchPositiveReportQueryView> searchPositiveReportQueryViewList = subjectQueryRepository.findAllBy();
@@ -43,17 +52,6 @@ class ArchReportQueryFacadeImpl implements ArchReportQueryFacade {
     @Override
     public SearchReportDetailsQueryView findSearchReportDetailsById(Long id) {
         return subjectQueryRepository.findOneById(id);
-    }
-
-    @Override //todo zmiana na view
-    public CheckReportQueryDto findCheckReportById(Long id) {
-        return reportSyncRequestEntityRepository.findCheckReportById(id);
-    }
-
-    @Override
-    public List<CheckReportQueryView> allCheckReports() {
-        return reportSyncRequestEntityRepository.findByReportType(ReportType.CHECK);
-
     }
 
 
