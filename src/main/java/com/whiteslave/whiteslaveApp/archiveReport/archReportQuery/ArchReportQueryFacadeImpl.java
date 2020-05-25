@@ -7,13 +7,22 @@ import com.whiteslave.whiteslaveApp.archiveReport.archReportQuery.view.CheckRepo
 import com.whiteslave.whiteslaveApp.archiveReport.archReportQuery.view.SearchNegativeReportQueryView;
 import com.whiteslave.whiteslaveApp.archiveReport.archReportQuery.view.SearchPositiveReportQueryView;
 import com.whiteslave.whiteslaveApp.archiveReport.archReportQuery.view.SearchReportDetailsQueryView;
+import com.whiteslave.whiteslaveApp.archiveReport.entity.ReportSyncRequestEntity;
 import com.whiteslave.whiteslaveApp.reportSync.domain.enums.ReportType;
 import com.whiteslave.whiteslaveApp.reportSync.domain.enums.SearchResult;
+import javassist.NotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.boot.model.source.spi.RelationalValueSource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 
+import java.net.MalformedURLException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -55,6 +64,26 @@ class ArchReportQueryFacadeImpl implements ArchReportQueryFacade {
         return reportSyncRequestEntityRepository.findByReportType(ReportType.CHECK);
 
     }
+
+    @Override
+    public Resource findReportFileByEntityId(Long id) {
+        ReportSyncRequestEntity requestEntity = reportSyncRequestEntityRepository.getOne(id);
+        String pdfFileName = requestEntity.getPdfFileName();
+        try {
+            Path path = Paths.get(pdfFileName).normalize();
+            Resource resource = new UrlResource(path.toUri());
+            if (resource.exists()) {
+                return resource;
+            } else {//todo przerobic aby tylko nazwa pliku byla w bazie danych. Sciezka na sztywno w konfiguracji
+                throw new FileNotFoundException("File not found " + pdfFileName);
+            }
+        }catch (MalformedURLException e) {
+            throw  new FileNotFoundException("File not found " + pdfFileName,e);
+        }
+
+    }
+
+
 
 
 }

@@ -1,5 +1,6 @@
 package com.whiteslave.whiteslaveApp.exceptionHandler;
 
+import com.whiteslave.whiteslaveApp.archiveReport.archReportQuery.FileNotFoundException;
 import com.whiteslave.whiteslaveApp.govRequestReport.client.MfGovException;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.HibernateException;
@@ -40,6 +41,13 @@ public class WhtieSlaveExceptionHandler extends ResponseEntityExceptionHandler {
         ExceptionHandlerResponse exceptionResponse = getExceptionHandlerResponse(rex, request);
         log.error("Data Base server error. Can not get or save any report.", rex);
         return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(exceptionResponse);
+    }
+
+    @ExceptionHandler({FileNotFoundException.class})
+    public final ResponseEntity<Object> handleFileNotFoundException(RuntimeException rex, WebRequest request) {
+        ExceptionHandlerResponse exceptionResponse = getExceptionHandlerResponse(rex, request);
+        log.error("Report file not found!", rex);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exceptionResponse);
     }
 
     @Override

@@ -2,16 +2,20 @@ package com.whiteslave.whiteslaveApp.controller;
 
 import com.whiteslave.whiteslaveApp.archiveReport.archReportQuery.*;
 import com.whiteslave.whiteslaveApp.archiveReport.archReportQuery.dto.CheckReportQueryDto;
-import com.whiteslave.whiteslaveApp.archiveReport.archReportQuery.repository.SubjectEntityQueryRepository;
 import com.whiteslave.whiteslaveApp.archiveReport.archReportQuery.view.CheckReportQueryView;
 import com.whiteslave.whiteslaveApp.archiveReport.archReportQuery.view.SearchPositiveReportQueryView;
 import com.whiteslave.whiteslaveApp.archiveReport.archReportQuery.view.SearchReportDetailsQueryView;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.util.List;
 
 @Slf4j
@@ -29,7 +33,7 @@ class ArchReportQueryController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Search successful"),
             @ApiResponse(code = 400, message = "The request cannot be fulfilled because of wrong syntax"),
-            @ApiResponse(code = 404, message = "Server has not found anything matching the requested URI! No users found!"),
+            @ApiResponse(code = 404, message = "Server has not found anything matching the requested URI! No reports found!"),
             @ApiResponse(code = 503, message = "Server error. Can't get any reports from data base."),
     })
     public ResponseEntity<Object> findAllSyncCheckReports() {
@@ -42,7 +46,7 @@ class ArchReportQueryController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Search successful"),
             @ApiResponse(code = 400, message = "The request cannot be fulfilled because of wrong syntax"),
-            @ApiResponse(code = 404, message = "Server has not found anything matching the requested URI! No users found!"),
+            @ApiResponse(code = 404, message = "Server has not found anything matching the requested URI! No reports found!"),
             @ApiResponse(code = 503, message = "Server error. Can't get any reports from data base."),
     })
     @ApiImplicitParams({
@@ -59,7 +63,7 @@ class ArchReportQueryController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Search successful"),
             @ApiResponse(code = 400, message = "The request cannot be fulfilled because of wrong syntax"),
-            @ApiResponse(code = 404, message = "Server has not found anything matching the requested URI! No users found!"),
+            @ApiResponse(code = 404, message = "Server has not found anything matching the requested URI! No reports found!"),
             @ApiResponse(code = 503, message = "Server error. Can't get any reports from data base."),
     })
     public ResponseEntity<Object> findAllSyncSearchReports() {
@@ -73,7 +77,7 @@ class ArchReportQueryController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Search successful"),
             @ApiResponse(code = 400, message = "The request cannot be fulfilled because of wrong syntax"),
-            @ApiResponse(code = 404, message = "Server has not found anything matching the requested URI! No users found!"),
+            @ApiResponse(code = 404, message = "Server has not found anything matching the requested URI! No reports found!"),
             @ApiResponse(code = 503, message = "Server error. Can't get any reports from data base."),
     })
     @ApiImplicitParams({
@@ -83,6 +87,41 @@ class ArchReportQueryController {
     public ResponseEntity<Object> findSyncSearchReportDetailsById(@RequestParam("id") Long id) {
         SearchReportDetailsQueryView searchReportDetails = archReportQueryFacade.findSearchReportDetailsById(id);
         return ResponseEntity.ok().body(searchReportDetails);
+    }
+
+    @GetMapping("/pdfreport")
+    @ApiOperation(value = "Get pdf report file from data base by entiy ID",
+            response = SearchReportDetailsQueryView.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Search successful"),
+            @ApiResponse(code = 400, message = "The request cannot be fulfilled because of wrong syntax"),
+            @ApiResponse(code = 404, message = "No report file found!"),
+            @ApiResponse(code = 503, message = "Server error. Can't get any pdf reports from data base."),
+    })
+    @ApiImplicitParams({
+            @ApiImplicitParam(readOnly = true, name = "id", value = "Report entity ID whose pdf report file you want to find",
+                    dataTypeClass = String.class, paramType = "query")
+    })
+    //todo testowac sytuacje bez pliku czy cos
+    public ResponseEntity<Object> pdfReportFileBy(@RequestParam("id") Long id, HttpServletRequest servletRequest){
+        Resource resource = archReportQueryFacade.findReportFileByEntityId(id);
+
+        String contentType = null;
+        try{
+            contentType = servletRequest.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
+        } catch (IOException e) {
+            log.warn("Could not determine file type.");
+        }
+
+        if(contentType == null) {
+            contentType = "application/octet-stream";
+        }
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(contentType))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename:\"" + resource.getFilename())
+                .body(resource);
+
     }
 
 //

@@ -4,6 +4,8 @@ import com.whiteslave.whiteslaveApp.archiveReport.archReportQuery.dto.CheckRepor
 import com.whiteslave.whiteslaveApp.archiveReport.archReportQuery.view.CheckReportQueryView;
 import com.whiteslave.whiteslaveApp.archiveReport.archReportQuery.view.SearchPositiveReportQueryView;
 import com.whiteslave.whiteslaveApp.archiveReport.archReportQuery.view.SearchReportDetailsQueryView;
+import com.whiteslave.whiteslaveApp.archiveReport.entity.ReportSyncRequestEntity;
+import org.springframework.core.io.Resource;
 
 import java.util.List;
 
@@ -16,6 +18,8 @@ public interface ArchReportQueryFacade {
     List<SearchPositiveReportQueryView> allSearchReports();
 
     SearchReportDetailsQueryView findSearchReportDetailsById(Long id);
+
+    Resource findReportFileByEntityId(Long id);
 
 
 }
