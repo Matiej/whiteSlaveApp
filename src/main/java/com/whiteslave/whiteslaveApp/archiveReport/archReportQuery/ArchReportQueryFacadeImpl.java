@@ -74,16 +74,13 @@ class ArchReportQueryFacadeImpl implements ArchReportQueryFacade {
             Resource resource = new UrlResource(path.toUri());
             if (resource.exists()) {
                 return resource;
-            } else {//todo przerobic aby tylko nazwa pliku byla w bazie danych. Sciezka na sztywno w konfiguracji
+            } else {//todo przerobic aby tylko nazwa pliku byla w bazie danych. Sciezka na sztywno w konfiguracji aby nie bylo w logach widac dokladnie gdzie raporty
                 throw new FileNotFoundException("File not found " + pdfFileName);
             }
-        }catch (MalformedURLException e) {
-            throw  new FileNotFoundException("File not found " + pdfFileName,e);
+        } catch (MalformedURLException  | RuntimeException e) {
+            throw new FileNotFoundException("File not found for report: " + pdfFileName, e);
         }
-
     }
-
-
 
 
 }
