@@ -7,7 +7,7 @@ import java.io.File;
 
 public interface ArchReportService {
 
-    File generateReportPdf(ReportSyncRequest reportSyncRequest);
+    File generateAndSaveReportPdf(ReportSyncRequest reportSyncRequest);
 
     ReportSyncRequest saveReport(ReportSyncRequest reportSyncRequest) throws HibernateException;
 }
