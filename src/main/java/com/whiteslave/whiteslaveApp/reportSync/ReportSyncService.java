@@ -33,13 +33,16 @@ class ReportSyncService {
 
         ReportSyncRequest reportSyncRequest = govReportDto2ReportSyncRequestConverter.checkReportDtoConvertToReportSyncConverter(checkReportDto, requestParams);
         File file = archReportService.generateAndSaveReportPdf(reportSyncRequest);
+        reportSyncRequest.setPdfFileName(file.getAbsolutePath());
         archReportService.saveReport(reportSyncRequest);
     }
 
     @Transactional
     public void syncToPDFAndSaveSearchReport(SearchReportDto searchReportDto, String... requestParams) throws HibernateException {
+
         ReportSyncRequest reportSyncRequest = govReportDto2ReportSyncRequestConverter.searchReportDtoConvertToReportSyncConverter(searchReportDto, requestParams);
         File file = archReportService.generateAndSaveReportPdf(reportSyncRequest);
+        reportSyncRequest.setPdfFileName(file.getAbsolutePath());
         getNegativeRequest(reportSyncRequest).forEach(archReportService::saveReport);
         archReportService.saveReport(reportSyncRequest);
 

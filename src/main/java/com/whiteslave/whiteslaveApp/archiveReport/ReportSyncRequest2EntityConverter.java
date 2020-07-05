@@ -21,6 +21,7 @@ class ReportSyncRequest2EntityConverter {
         entity.setRequestNip(reportSyncRequest.getRequestNip());
         entity.setRequestRegon(reportSyncRequest.getRequestRegon());
         entity.setRequestBankAccount(reportSyncRequest.getRequestBankAccount());
+        entity.setPdfFileName(reportSyncRequest.getPdfFileName());
 
         GovResponse govResponse = reportSyncRequest.getGovResponse();
         if (govResponse instanceof CheckGovResponse) {

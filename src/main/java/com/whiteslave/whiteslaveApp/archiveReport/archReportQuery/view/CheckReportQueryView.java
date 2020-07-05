@@ -8,6 +8,9 @@ public interface CheckReportQueryView extends ArchReportQueryView {
     @Value("#{target.govResponseEntity.requestId}")
     String getRequestId();
 
+    @Value("#{target.govResponseEntity.reportSyncRequestEntity.id}")
+    Long getSyncRequestEntityId();
+
     @Value("#{target.govResponseEntity.accountAssigned}")
     String getAccountAssigned();
 }

@@ -21,6 +21,7 @@ public class ReportSyncRequest {
     private SearchResult searchResult;
     private ReportType reportType;
     private GovResponse govResponse;
+    private String pdfFileName;
     private String requestNip;
     private String requestRegon;
     private String requestBankAccount;
