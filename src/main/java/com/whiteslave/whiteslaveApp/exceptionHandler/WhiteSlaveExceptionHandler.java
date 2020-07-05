@@ -58,8 +58,9 @@ public class WhiteSlaveExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler({FileNotFoundException.class})
     public final ResponseEntity<Object> handleFileNotFoundException(RuntimeException rex, WebRequest request) {
-        ExceptionHandlerResponse exceptionResponse = getExceptionHandlerResponse(rex, request);
-        log.error("Report file not found!", rex);
+        String message = "Report file not found!";
+        ExceptionHandlerResponse exceptionResponse = getExceptionHandlerResponse(rex, request, message);
+        log.error(message, rex);
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exceptionResponse);
     }
 
