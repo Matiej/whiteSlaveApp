@@ -20,7 +20,7 @@ class ArchReportServiceImpl implements ArchReportService {
     private final ReportSyncRequestRepository repository;
 
     @Override
-    public File generateReportPdf(ReportSyncRequest reportSyncRequest) {
+    public File generateAndSaveReportPdf(ReportSyncRequest reportSyncRequest) {
         return pdfReportService.preparePdfReport(reportSyncRequest);
     }
 
