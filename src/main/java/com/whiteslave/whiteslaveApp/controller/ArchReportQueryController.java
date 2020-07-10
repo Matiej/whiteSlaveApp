@@ -89,8 +89,7 @@ class ArchReportQueryController {
     }
 
     @GetMapping("/pdfreport")
-    @ApiOperation(value = "Get pdf report file from data base by entiy ID",
-            response = SearchReportDetailsQueryView.class)
+    @ApiOperation(value = "Get pdf report file from data base by entiy ID" )
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Search successful"),
             @ApiResponse(code = 400, message = "The request cannot be fulfilled because of wrong syntax"),
@@ -102,8 +101,9 @@ class ArchReportQueryController {
                     dataTypeClass = String.class, paramType = "query")
     })
     //todo testowac sytuacje bez pliku czy cos
-    public ResponseEntity<Object> pdfReportFileBy(@RequestParam("id") Long id, HttpServletRequest servletRequest){
-        Resource resource = archReportQueryFacade.findReportFileByEntityId(id);
+    public ResponseEntity<Object> pdfReportFileBy(@RequestParam("id") String id, HttpServletRequest servletRequest){
+        //todo walidacja ID
+        Resource resource = archReportQueryFacade.findReportFileByEntityId(Long.valueOf(id));
 
         String contentType = null;
         try{

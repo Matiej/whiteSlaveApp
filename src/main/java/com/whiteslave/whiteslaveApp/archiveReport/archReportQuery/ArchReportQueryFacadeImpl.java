@@ -73,7 +73,7 @@ przekonwertowana.
                 throw new FileNotFoundException("File not found " + pdfFileName);
             }
         } catch (MalformedURLException  | RuntimeException e) {
-            throw new FileNotFoundException("File not found for report: " + pdfFileName, e);
+            throw new FileNotFoundException("File report not found for id: " + id, e);
         }
     }
 }
