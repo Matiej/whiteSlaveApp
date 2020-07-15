@@ -63,8 +63,8 @@ przekonwertowana.
     @Override
     public Resource findReportFileByEntityId(Long id) {
         ReportSyncRequestEntity requestEntity = reportSyncRequestEntityRepository.getOne(id);
-        String pdfFileName = requestEntity.getPdfFileName();
         try {
+            String pdfFileName = requestEntity.getPdfFileName();
             Path path = Paths.get(pdfFileName).normalize();
             Resource resource = new UrlResource(path.toUri());
             if (resource.exists()) {
