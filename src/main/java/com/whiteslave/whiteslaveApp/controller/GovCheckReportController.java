@@ -10,13 +10,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import static com.whiteslave.whiteslaveApp.controller.HttpHeaderFactory.getSuccessfulHeaders;
+
 @Slf4j
 @Validated
 @RestController
 @RequestMapping("/check")
 @RequiredArgsConstructor
 @Api(description = "Quick check for company information inf gov white list.")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "${cross.origin.webui}")
 public class GovCheckReportController {
 
     private final ReportDtoFacade reportDtoFacade;
@@ -40,7 +42,10 @@ public class GovCheckReportController {
     ResponseEntity<Object> checkByNipAndBankAccoutAndDate(@RequestParam("nip") String nip,
                                                           @RequestParam("bankAccount") String bankAccount,
                                                           @RequestParam("date") String date) {
-        return ResponseEntity.ok(reportDtoFacade.checkAndSynchronizeByNipAndBankAccoutAndDate(nip,bankAccount,date));
+        CheckReportDto checkReportDto = reportDtoFacade.checkAndSynchronizeByNipAndBankAccoutAndDate(nip, bankAccount, date);
+        return ResponseEntity.ok()
+                .headers(getSuccessfulHeaders())
+                .body(checkReportDto);
     }
 
     @GetMapping("/regon&bankaccount/date")
@@ -62,7 +67,10 @@ public class GovCheckReportController {
     ResponseEntity<Object> checkByRegonAndBankAccoutnAndDate(@RequestParam("regon") String regon,
                                                              @RequestParam("bankAccount") String bankAccount,
                                                              @RequestParam("date") String date) {
-        return ResponseEntity.ok(reportDtoFacade.checkAmdSynchronizeByRegonAndBankAccoutnAndDate(regon,bankAccount,date));
+        CheckReportDto checkReportDto = reportDtoFacade.checkAmdSynchronizeByRegonAndBankAccoutnAndDate(regon, bankAccount, date);
+        return ResponseEntity.ok()
+                .headers(getSuccessfulHeaders())
+                .body(checkReportDto);
     }
 
 }
