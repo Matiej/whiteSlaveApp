@@ -89,6 +89,9 @@ mfgov:
   feign:
     name: whiteListGov
     url: https://wl-api.mf.gov.pl/api
+cross:
+  origin:
+    webui: http://localhost:4200
 
 #actuator
 management:

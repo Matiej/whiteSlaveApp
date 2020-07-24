@@ -8,12 +8,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import static com.whiteslave.whiteslaveApp.controller.HttpHeaderFactory.getSuccessfulHeaders;
+
 @Slf4j
 @RestController
 @RequestMapping("/search")
 @RequiredArgsConstructor
 @Api(description = "Search for company reports/information in gov white list.")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "${cross.origin.webui}")
 public class GovSearchReportController {
 
     private final ReportDtoFacade reportDtoFacade;
@@ -34,7 +36,10 @@ public class GovSearchReportController {
     })
     ResponseEntity<Object> searchByBankAccountAndDate(@RequestParam("bankAccount") String bankAccount,
                                                       @RequestParam("date") String date) {
-        return ResponseEntity.ok(reportDtoFacade.searchAndSynchronizeByBankAccountAndDate(bankAccount,date));
+        SearchReportDto searchReportDto = reportDtoFacade.searchAndSynchronizeByBankAccountAndDate(bankAccount, date);
+        return ResponseEntity.ok()
+                .headers(getSuccessfulHeaders())
+                .body(searchReportDto);
     }
 
     @GetMapping("/bankAccounts/date")
@@ -54,7 +59,10 @@ public class GovSearchReportController {
     })
     ResponseEntity<Object> searchByBankAccountsAndDate(@RequestParam("bankAccounts") String bankAccounts,
                                                        @RequestParam("date") String date) {
-        return ResponseEntity.ok(reportDtoFacade.searchAndSynchronizeByBankAccountsAndDate(bankAccounts,date));
+        SearchReportDto searchReportDto = reportDtoFacade.searchAndSynchronizeByBankAccountsAndDate(bankAccounts, date);
+        return ResponseEntity.ok()
+                .headers(getSuccessfulHeaders())
+                .body(searchReportDto);
     }
 
     @GetMapping("/nip/date")
@@ -73,7 +81,10 @@ public class GovSearchReportController {
     })
     ResponseEntity<Object> searchByNipAndDate(@RequestParam("nip") String nip,
                                               @RequestParam("date") String date) {
-        return ResponseEntity.ok().body(reportDtoFacade.searchAndSynchronizeByNipAndDate(nip,date));
+        SearchReportDto searchReportDto = reportDtoFacade.searchAndSynchronizeByNipAndDate(nip, date);
+        return ResponseEntity.ok()
+                .headers(getSuccessfulHeaders())
+                .body(searchReportDto);
     }
 
     @GetMapping("/nips/date")
@@ -92,7 +103,10 @@ public class GovSearchReportController {
                     dataTypeClass = String.class, paramType = "query", example = "2019-12-01")
     })
     ResponseEntity<Object> searchByNipsAndDate(@RequestParam("nips") String nips, @RequestParam("date") String date) {
-        return ResponseEntity.ok(reportDtoFacade.searchAndSynchronizeByNipsAndDate(nips,date));
+        SearchReportDto searchReportDto = reportDtoFacade.searchAndSynchronizeByNipsAndDate(nips, date);
+        return ResponseEntity.ok()
+                .headers(getSuccessfulHeaders())
+                .body(searchReportDto);
     }
 
     //todo nie wiem czy tutaj to zostawić. Może do innej klasy jakieś przenieść?? hm
@@ -111,7 +125,10 @@ public class GovSearchReportController {
                     dataTypeClass = String.class, paramType = "query", example = "2019-12-01")
     })
     ResponseEntity<Object> searchByRegonAndDate(@RequestParam("regon") String regon, @RequestParam("date") String date) {
-        return ResponseEntity.ok(reportDtoFacade.searchAndSynchronizeByRegonAndDate(regon,date));
+        SearchReportDto searchReportDto = reportDtoFacade.searchAndSynchronizeByRegonAndDate(regon, date);
+        return ResponseEntity.ok()
+                .headers(getSuccessfulHeaders())
+                .body(searchReportDto);
     }
 
     @GetMapping("/regons/date")
@@ -130,7 +147,10 @@ public class GovSearchReportController {
                     dataTypeClass = String.class, paramType = "query", example = "2019-12-01")
     })
     ResponseEntity<Object> searchByRegonsAndDate(@RequestParam String regons, @RequestParam String date) {
-        return ResponseEntity.ok(reportDtoFacade.searchAndSynchronizeByRegonsAndDate(regons,date));
+        SearchReportDto searchReportDto = reportDtoFacade.searchAndSynchronizeByRegonsAndDate(regons, date);
+        return ResponseEntity.ok()
+                .headers(getSuccessfulHeaders())
+                .body(searchReportDto);
     }
 
 }
