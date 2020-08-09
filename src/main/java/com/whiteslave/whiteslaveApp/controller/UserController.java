@@ -1,5 +1,8 @@
 package com.whiteslave.whiteslaveApp.controller;
 
+import com.whiteslave.whiteslaveApp.user.UserFacade;
+import com.whiteslave.whiteslaveApp.user.domain.dto.CreateUserDto;
+import com.whiteslave.whiteslaveApp.user.domain.dto.UserDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -8,11 +11,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.validation.Valid;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -22,8 +25,10 @@ import java.util.UUID;
 @RequestMapping("/user")
 @RequiredArgsConstructor
 @Api(description = "User controller to ....")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "${cross.origin.webui}")
 public class UserControllerr {
+
+    private final UserFacade userFacade;
 
     @GetMapping("/test")
     @ApiOperation(value = "FILL IT", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -34,11 +39,29 @@ public class UserControllerr {
             @ApiResponse(code = 503, message = "Server error. Can't get any reports from data base."),
     })
     public ResponseEntity<Object> findAllSyncCheckReports() {
-        Map<String,Object> response = new HashMap<>();
+        Map<String, Object> response = new HashMap<>();
         response.put("id", UUID.randomUUID().toString());
         response.put("content", "Hello World");
         log.info("Response test-> " + response);
         return ResponseEntity.ok()
                 .body(response);
     }
+
+    @PostMapping("create")
+    @ApiOperation(value = "Create new authorization user", response = UserDto.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "Auth user created and saved to data base successful"),
+            @ApiResponse(code = 409, message = "Auth user already exists, can't create"),
+            @ApiResponse(code = 503, message = "Data base server error. Can't create auth user.")})
+    ResponseEntity<Object> create(@RequestBody @Valid CreateUserDto createAuthUser) {
+        UserDto createdAuthUser = userFacade.createUser(createAuthUser);
+        URI savedUri = ServletUriComponentsBuilder
+                .fromCurrentRequestUri()
+                .query("id={id}")
+                .buildAndExpand(createdAuthUser.getId())
+                .toUri();
+        return ResponseEntity.created(savedUri)
+                .body(createdAuthUser);
+    }
+
 }

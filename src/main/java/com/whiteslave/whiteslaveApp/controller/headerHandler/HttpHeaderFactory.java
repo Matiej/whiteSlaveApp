@@ -1,4 +1,4 @@
-package com.whiteslave.whiteslaveApp.controller;
+package com.whiteslave.whiteslaveApp.controller.headerHandler;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;

@@ -1,8 +1,7 @@
 package com.whiteslave.whiteslaveApp.controller;
 
-import com.whiteslave.whiteslaveApp.govRequestReport.checkReport.CheckReportService;
 import com.whiteslave.whiteslaveApp.govRequestReport.checkReport.domain.dto.CheckReportDto;
-import com.whiteslave.whiteslaveApp.reportSync.ReportDtoFacade;
+import com.whiteslave.whiteslaveApp.reportSync.ReportFacade;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import static com.whiteslave.whiteslaveApp.controller.HttpHeaderFactory.getSuccessfulHeaders;
+import static com.whiteslave.whiteslaveApp.controller.headerHandler.HttpHeaderFactory.getSuccessfulHeaders;
 
 @Slf4j
 @Validated
@@ -21,7 +20,7 @@ import static com.whiteslave.whiteslaveApp.controller.HttpHeaderFactory.getSucce
 @CrossOrigin(origins = "${cross.origin.webui}")
 public class GovCheckReportController {
 
-    private final ReportDtoFacade reportDtoFacade;
+    private final ReportFacade reportFacade;
 
     @GetMapping("/nip&bankaccount/date")
     @ApiOperation(value = "Check for quick company information by nip, bank account number and date.", response = CheckReportDto.class)
@@ -42,7 +41,7 @@ public class GovCheckReportController {
     ResponseEntity<Object> checkByNipAndBankAccoutAndDate(@RequestParam("nip") String nip,
                                                           @RequestParam("bankAccount") String bankAccount,
                                                           @RequestParam("date") String date) {
-        CheckReportDto checkReportDto = reportDtoFacade.checkAndSynchronizeByNipAndBankAccoutAndDate(nip, bankAccount, date);
+        CheckReportDto checkReportDto = reportFacade.checkAndSynchronizeByNipAndBankAccoutAndDate(nip, bankAccount, date);
         return ResponseEntity.ok()
                 .headers(getSuccessfulHeaders())
                 .body(checkReportDto);
@@ -67,7 +66,7 @@ public class GovCheckReportController {
     ResponseEntity<Object> checkByRegonAndBankAccoutnAndDate(@RequestParam("regon") String regon,
                                                              @RequestParam("bankAccount") String bankAccount,
                                                              @RequestParam("date") String date) {
-        CheckReportDto checkReportDto = reportDtoFacade.checkAmdSynchronizeByRegonAndBankAccoutnAndDate(regon, bankAccount, date);
+        CheckReportDto checkReportDto = reportFacade.checkAmdSynchronizeByRegonAndBankAccoutnAndDate(regon, bankAccount, date);
         return ResponseEntity.ok()
                 .headers(getSuccessfulHeaders())
                 .body(checkReportDto);
