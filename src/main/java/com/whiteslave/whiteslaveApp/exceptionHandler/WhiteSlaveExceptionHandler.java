@@ -1,7 +1,7 @@
 package com.whiteslave.whiteslaveApp.exceptionHandler;
 
 import com.whiteslave.whiteslaveApp.archiveReport.archReportQuery.FileNotFoundException;
-import com.whiteslave.whiteslaveApp.controller.HeaderKey;
+import com.whiteslave.whiteslaveApp.controller.headerHandler.HeaderKey;
 import com.whiteslave.whiteslaveApp.govRequestReport.client.MfGovException;
 import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +19,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import javax.validation.ConstraintViolationException;
 import java.time.LocalDateTime;
-import java.util.Iterator;
 
 @Slf4j
 @RestController
