@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -21,6 +22,7 @@ class UserFacadeImpl implements UserFacade {
     private final UserRepository userRepository;
     private final CreateUserDto2UserEntityConverter createUserDto2UserEntityConverter;
     private final UserEntity2UserDtoConverter userEntity2UserDtoConverter;
+    private final UserDto2UserEntityConverter userDto2UserEntityConverter;
 
     @Override
     @Transactional
@@ -28,8 +30,8 @@ class UserFacadeImpl implements UserFacade {
         User userTosave = createUserDto2UserEntityConverter.convert2UserEntity(createUserDto);
 
         if(isUserExist(userTosave)) {
-            log.error("User exist in data base");
-            throw new UserExistException("User exist in data base");
+            log.error("User exist in data base. Can not add -> " + userTosave.getLogin());
+            throw new UserExistException("User exist in data base. Can not add ->  "+ userTosave.getLogin());
         }
         User savedUser;
         try {
@@ -38,7 +40,7 @@ class UserFacadeImpl implements UserFacade {
             throw new HibernateException("Can't save user to data base");
         }
 
-        UserDto userDto = userEntity2UserDtoConverter.convertToUserDto(savedUser);
+        UserDto userDto = userEntity2UserDtoConverter.convert2User(savedUser);
 
         return userDto;
     }
@@ -50,14 +52,38 @@ class UserFacadeImpl implements UserFacade {
     }
 
     @Override
-    public UserDto updaeUser(UserDto userDto) {
+    public UserDto update(UserDto userDto) {
+        if(!userRepository.existsById(userDto.getId())) {
+            throw new UserExistException("User id: " + userDto.getId() + " is not exist!");
+        }
+        UserDto updatedUserDto = null;
+        try {
+            User user = userDto2UserEntityConverter.convertToUserDto(userDto);
+            updatedUserDto = userEntity2UserDtoConverter.convert2User(userRepository.save(user));
+        } catch (Exception e) {
+            throw new HibernateException("Can't update user");
+        }
+        return updatedUserDto;
+    }
+
+    @Override
+    public UserDto findById(Long id) {
         return null;
+    }
+
+    @Override
+    public void delete(Long id) {
+        Optional<User> userToDelete = userRepository.findById(id);
+        userToDelete.ifPresentOrElse(userRepository::delete, () -> {
+            throw new UserExistException(String.format("User ID: %s, you try to delete is not exist", id));
+        });
+
     }
 
     @Override
     public List<UserDto> findAll() {
         return userRepository.findAll().stream()
-                .map(userEntity2UserDtoConverter::convertToUserDto)
+                .map(userEntity2UserDtoConverter::convert2User)
                 .collect(Collectors.toList());
     }
 

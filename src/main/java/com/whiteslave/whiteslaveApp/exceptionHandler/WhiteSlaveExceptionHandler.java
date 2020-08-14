@@ -3,6 +3,7 @@ package com.whiteslave.whiteslaveApp.exceptionHandler;
 import com.whiteslave.whiteslaveApp.archiveReport.archReportQuery.FileNotFoundException;
 import com.whiteslave.whiteslaveApp.controller.headerHandler.HeaderKey;
 import com.whiteslave.whiteslaveApp.govRequestReport.client.MfGovException;
+import com.whiteslave.whiteslaveApp.user.exception.UserExistException;
 import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.HibernateException;
@@ -74,6 +75,18 @@ public class WhiteSlaveExceptionHandler extends ResponseEntityExceptionHandler {
         log.error(message, rex);
         HttpStatus notFound = HttpStatus.NOT_FOUND;
         return ResponseEntity.status(notFound)
+                .contentType(MediaType.APPLICATION_JSON)
+                .headers(getExceptionHeaders(String.valueOf(notFound.value()), message))
+                .body(exceptionResponse);
+    }
+
+    @ExceptionHandler({UserExistException.class})
+    public final ResponseEntity<Object> handleFileUserExistException(RuntimeException rex, WebRequest request) {
+        String message = "User exist error.";
+        ExceptionHandlerResponse exceptionResponse = getExceptionHandlerResponse(rex, request, message);
+        log.error(message, rex);
+        HttpStatus notFound = HttpStatus.NOT_FOUND;
+        return ResponseEntity.status(HttpStatus.CONFLICT)
                 .contentType(MediaType.APPLICATION_JSON)
                 .headers(getExceptionHeaders(String.valueOf(notFound.value()), message))
                 .body(exceptionResponse);

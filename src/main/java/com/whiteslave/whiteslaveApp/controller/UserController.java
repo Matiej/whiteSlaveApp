@@ -57,12 +57,13 @@ public class UserController {
     ResponseEntity<Object> create(@RequestBody CreateUserDto createUserDto) {
         UserDto createdAuthUser = userFacade.createUser(createUserDto);
         URI savedUri = ServletUriComponentsBuilder
-                //todo naprawic
-                .fromCurrentRequestUri()
+                .fromCurrentServletMapping()
+                .path("/user/findbyid")
                 .query("id={id}")
                 .buildAndExpand(createdAuthUser.getId())
                 .toUri();
         return ResponseEntity.created(savedUri)
+                .headers(getSuccessfulHeaders())
                 .body(createdAuthUser);
     }
 
@@ -79,6 +80,26 @@ public class UserController {
         return ResponseEntity.ok()
                 .headers(getSuccessfulHeaders())
                 .body(userDtoList);
+    }
+
+    @DeleteMapping("/delete")
+    @ApiOperation(value = "Delete user by ID")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Delete successful"),
+            @ApiResponse(code = 400, message = "The request cannot be fulfilled because of wrong syntax"),
+            @ApiResponse(code = 404, message = "Server has not found anything matching the requested URI! No users found!"),
+            @ApiResponse(code = 503, message = "Server error. Can't get any requests."),
+    })
+    @ApiImplicitParams({
+            @ApiImplicitParam(readOnly = true, name = "id", value = "User ID from data base.",
+                    dataTypeClass = String.class, paramType = "query"),
+    })
+    ResponseEntity<Object> delete(@RequestParam("id") String id) {
+
+        userFacade.delete(Long.valueOf(id));
+        return ResponseEntity.ok()
+                .headers(getSuccessfulHeaders())
+                .build();
     }
 
 }

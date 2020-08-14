@@ -4,12 +4,11 @@ import com.whiteslave.whiteslaveApp.user.domain.dto.UserDto;
 import com.whiteslave.whiteslaveApp.user.entity.User;
 import org.springframework.stereotype.Component;
 
-
 @Component
-class UserEntity2UserDtoConverter {
+public class UserDto2UserEntityConverter {
 
-    public UserDto convert2User(User user) {
-        return new UserDto()
+    public User convertToUserDto(UserDto user) {
+        return new User()
                 .setId(user.getId())
                 .setUsername(user.getUsername())
                 .setLogin(user.getLogin())

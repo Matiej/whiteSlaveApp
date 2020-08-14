@@ -9,7 +9,11 @@ public interface UserFacade {
 
     UserDto createUser(CreateUserDto createUserDto);
 
-    UserDto updaeUser(UserDto userDto);
+    UserDto update(UserDto userDto);
+
+    UserDto findById(Long id);
+
+    void delete(Long id);
 
     List<UserDto> findAll();
 
