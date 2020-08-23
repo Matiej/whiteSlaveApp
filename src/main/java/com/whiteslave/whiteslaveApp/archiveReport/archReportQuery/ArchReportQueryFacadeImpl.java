@@ -51,7 +51,7 @@ przekonwertowana.
         List<SearchNegativeReportQueryView> searchNegativeReportQueryViewList = reportSyncRequestEntityRepository
                 .findAllByReportTypeAndSearchResult(ReportType.SEARCH, SearchResult.NEGATIVE);
         searchPositiveReportQueryViewList.addAll(searchNegativeReportQueryViewList);
-        searchPositiveReportQueryViewList.sort(Comparator.comparing(SearchPositiveReportQueryView::getRequestDate));
+        searchPositiveReportQueryViewList.sort(Comparator.comparing(SearchPositiveReportQueryView::getRequestDate).reversed());
         return searchPositiveReportQueryViewList;
     }
 

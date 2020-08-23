@@ -16,7 +16,7 @@ import static com.whiteslave.whiteslaveApp.controller.headerHandler.HttpHeaderFa
 @RequiredArgsConstructor
 @Api(description = "Search for company reports/information in gov white list.")
 @CrossOrigin(origins = "${cross.origin.webui}")
-public class GovSearchReportController {
+class GovSearchReportController {
 
     private final ReportFacade reportFacade;
 

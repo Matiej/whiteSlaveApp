@@ -27,26 +27,9 @@ import static com.whiteslave.whiteslaveApp.controller.headerHandler.HttpHeaderFa
 @RequiredArgsConstructor
 @Api(description = "User controller to ....")
 @CrossOrigin(origins = "${cross.origin.webui}")
-public class UserController {
+class UserController {
 
     private final UserFacade userFacade;
-
-    @GetMapping("/test")
-    @ApiOperation(value = "FILL IT", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Search successful"),
-            @ApiResponse(code = 400, message = "The request cannot be fulfilled because of wrong syntax"),
-            @ApiResponse(code = 404, message = "Server has not found anything matching the requested URI! No users found!"),
-            @ApiResponse(code = 503, message = "Server error. Can't get any reports from data base."),
-    })
-    public ResponseEntity<Object> findAllSyncCheckReports() {
-        Map<String, Object> response = new HashMap<>();
-        response.put("id", UUID.randomUUID().toString());
-        response.put("content", "Hello World");
-        log.info("Response test-> " + response);
-        return ResponseEntity.ok()
-                .body(response);
-    }
 
     @PostMapping("/create")
     @ApiOperation(value = "Create new authorization user", response = UserDto.class)
