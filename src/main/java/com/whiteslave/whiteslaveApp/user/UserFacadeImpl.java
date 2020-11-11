@@ -96,4 +96,11 @@ class UserFacadeImpl implements UserFacade {
     public UserDto logout() {
         return null;
     }
+
+    @Override
+    public UserDto validateUser() {
+        return null;
+    }
+
+
 }

@@ -20,4 +20,6 @@ public interface UserFacade {
     UserDto logIn(String username, String password);
 
     UserDto logout();
+
+    UserDto validateUser();
 }

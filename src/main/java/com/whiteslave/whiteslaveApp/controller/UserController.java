@@ -2,6 +2,7 @@ package com.whiteslave.whiteslaveApp.controller;
 
 import com.whiteslave.whiteslaveApp.govRequestReport.searchReport.domain.dto.SearchReportDto;
 import com.whiteslave.whiteslaveApp.user.UserFacade;
+import com.whiteslave.whiteslaveApp.user.domain.UserStatus;
 import com.whiteslave.whiteslaveApp.user.domain.dto.CreateUserDto;
 import com.whiteslave.whiteslaveApp.user.domain.dto.UserDto;
 import io.swagger.annotations.*;
@@ -12,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.HashMap;
@@ -58,7 +60,9 @@ class UserController {
             @ApiResponse(code = 404, message = "Server has not found anything matching the requested URI! No users found!"),
             @ApiResponse(code = 503, message = "Server error. Can't get any requests."),
     })
-    ResponseEntity<Object> findAll() {
+    ResponseEntity<Object> findAll(HttpServletRequest request) {
+        String authType = request.getAuthType();
+        String header = request.getHeader("user-agent");
         List<UserDto> userDtoList = userFacade.findAll();
         return ResponseEntity.ok()
                 .headers(getSuccessfulHeaders())
@@ -83,6 +87,22 @@ class UserController {
         return ResponseEntity.ok()
                 .headers(getSuccessfulHeaders())
                 .build();
+    }
+
+    @GetMapping("/validateuser")
+    @ApiOperation(value = "validate user to login", response = UserStatus.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "User validated successful"),
+            @ApiResponse(code = 400, message = "The request cannot be fulfilled because of wrong syntax"),
+            @ApiResponse(code = 401, message = "Unauthorized user not match"),
+            @ApiResponse(code = 404, message = "Server has not found anything matching the requested URI! No users found!"),
+            @ApiResponse(code = 503, message = "Server error. Can't get any requests."),
+    })
+    ResponseEntity<Object> validateUser() {
+        UserStatus userStatus = new UserStatus("User successfully authenticated");
+        return ResponseEntity.ok()
+                .headers(getSuccessfulHeaders())
+                .body(userStatus);
     }
 
 }
