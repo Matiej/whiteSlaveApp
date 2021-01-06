@@ -12,4 +12,6 @@ public class ExceptionHandlerResponse {
     private LocalDateTime errorTimeStamp;
     private String message;
     private String details;
+    private String statusCode;
+    private String status;
 }

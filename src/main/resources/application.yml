@@ -2,7 +2,7 @@ logging.level.com.whiteslave.whiteslaveApp.govRequestReport.client.MfGovWhiteLis
 
 spring:
   profiles:
-    active:  "dev"
+    active:  "devh2"
   application:
     name: whiteslaveApp
   output:
@@ -39,18 +39,19 @@ spring:
         trace: false
         web-allow-others: false
 
-
     ###
     #   Database Settings
     ###
   datasource:
 #    url: jdbc:h2:mem:whiteDb
     url: jdbc:mariadb://192.168.0.199:3306/whiteDb
+#    username: sa
     username: whiteSlaveApp
     password: test1234
+#    password:
     driver:
 #      driver-class-name: org.h2.Driver
-      driver-class-name: rg.mariadb.jdbc.Driver
+      driver-class-name: org.mariadb.jdbc.Driver
   jpa:
 #    database-platform: org.hibernate.dialect.H2Dialect
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
@@ -83,6 +84,8 @@ spring:
   #      springframework: INFO
 server:
   port: 8080
+#  servlet:
+#    contextPath: /whiteslave
 
 mfgov:
   feign:
@@ -91,6 +94,82 @@ mfgov:
 cross:
   origin:
     webui: http://localhost:4200
+
+swagger:
+  enabled: true
+
+#actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+    health:
+      show-details: ALWAYS
+
+reports:
+  search: d:\REPORTS\SEARCH_REPORTS
+  check: d:\REPORTS\CHECK_REPORTS
+---
+spring:
+  profiles: devh2
+
+    ###
+  #   H2 Settings
+  ###
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings:
+        trace: false
+        web-allow-others: false
+
+    ###
+    #   Database Settings
+    ###
+  datasource:
+    url: jdbc:h2:mem:whiteDb
+    username: sa
+    password:
+    driver:
+      driver-class-name: org.h2.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    generate-ddl: true
+    hibernate:
+      #      ddl-auto: create-drop
+#      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        generate_statistics: true
+        use_sql_comments: true
+        format_sql: true
+  logging:
+    level:
+      org.springframework: ERROR
+      com.whiteslave: DEBUG
+      org:
+        hibernate:
+          type: TRACE
+        stat: DEBUG
+server:
+  port: 8080
+#  servlet:
+#    contextPath: /whiteslave
+
+mfgov:
+  feign:
+    name: whiteListGov
+    url: https://wl-api.mf.gov.pl/api
+cross:
+  origin:
+    webui: http://localhost:4200
+
+swagger:
+  enabled: true
 
 #actuator
 management:
@@ -132,7 +211,7 @@ spring:
     database-platform: org.hibernate.dialect.H2Dialect
     generate-ddl: true
     hibernate:
-      ddl-auto=create: update
+#      ddl-auto=create: update
     show-sql: false
     properties:
       hibernate:
@@ -163,6 +242,13 @@ mfgov:
     name: whiteListGov
     url: https://wl-api.mf.gov.pl/api
 
+cross:
+  origin:
+    webui: http://localhost:4200
+
+swagger:
+  enabled: true
+
 #actuator
 management:
   endpoints:
@@ -172,5 +258,5 @@ management:
     health:
       show-details: ALWAYS
 reports:
-  search: '/OPT/'
-  check:  '/OPT/'
+  search: src/test/resources/testPdfReport
+  check: src/test/resources/testPdfReport

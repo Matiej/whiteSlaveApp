@@ -6,8 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)//jeżeli sa null to nie będą serializowane i nie będize problemu. Zostanie u nas null na polu.
+@JsonIgnoreProperties(ignoreUnknown = true)//pozwala ignorowac nie mapowane
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

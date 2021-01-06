@@ -2,6 +2,7 @@ package com.whiteslave.whiteslaveApp.config;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.Ordering;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;
@@ -18,13 +19,18 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 public class SwaggerConfig {
 
+    @Value("${prop.swagger.enabled:false}")
+    private boolean enableSwagger;
+
     @Bean
     public Docket productApi() {
         //TODO nie działa sortowanie w swagger -> znalezc
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("com.whiteslave.whiteslaveApp"))
+//                .apis(RequestHandlerSelectors.any())
                 .paths(Predicates.not(PathSelectors.regex("/error")))
+//                .paths(PathSelectors.any())
                 .build()
                 .apiInfo(metaInfo())
                 .apiDescriptionOrdering(new Ordering<ApiDescription>() {
@@ -43,11 +49,13 @@ public class SwaggerConfig {
 
     private ApiInfo metaInfo() {
         return new ApiInfoBuilder().title("White Slave app")
-                .description("Time and workout for employee")
+                .description("Application to find out company on gov white list.")
                 .version("0.1")
                 .contact(new Contact("Matiej", "", "maciek@testaarosa.pl"))
                 .license("Apache License 2.0")
                 .licenseUrl("https://www.apache.org/licenses/LICENSE-2.0")
                 .build();
     }
+
+
 }

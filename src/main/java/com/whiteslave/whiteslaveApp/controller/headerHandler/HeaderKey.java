@@ -1,4 +1,4 @@
-package com.whiteslave.whiteslaveApp.controller;
+package com.whiteslave.whiteslaveApp.controller.headerHandler;
 
 public enum HeaderKey {
     STATUS("Status"),

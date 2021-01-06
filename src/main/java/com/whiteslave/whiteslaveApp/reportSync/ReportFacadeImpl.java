@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-class ReportDtoFacadeImpl implements ReportDtoFacade {
+class ReportFacadeImpl implements ReportFacade {
 
     private final SearchReportService searchReportService;
     private final CheckReportService checkReportService;

@@ -39,7 +39,7 @@ class ReportSyncService {
 
     @Transactional
     public void syncToPDFAndSaveSearchReport(SearchReportDto searchReportDto, String... requestParams) throws HibernateException {
-
+//todo puscic na oddzelnym watku
         ReportSyncRequest reportSyncRequest = govReportDto2ReportSyncRequestConverter.searchReportDtoConvertToReportSyncConverter(searchReportDto, requestParams);
         File file = archReportService.generateAndSaveReportPdf(reportSyncRequest);
         reportSyncRequest.setPdfFileName(file.getAbsolutePath());
@@ -52,7 +52,7 @@ class ReportSyncService {
     // W response z rzadowego serwera po prostu puste parametry przychodza. Chce je zapisc do bazy jako sync odrebny.
     // Dla zapytan pojedynczych nie ma problemu.
     //todo moze jakis refaktor przeniesc do convertera aby robil pozytwyne i negatywne
-    private List<ReportSyncRequest> getNegativeRequest(ReportSyncRequest reportSyncRequest) {
+    private List<ReportSyncRequest> getNegativeRequest(final ReportSyncRequest reportSyncRequest) {
         List<ReportSyncRequest> negativeList = new ArrayList<>();
         SearchGovResponse govResponseReportSync = (SearchGovResponse) reportSyncRequest.getGovResponse();
         List<SubjectResponse> subjectResponseList = govResponseReportSync.getSubjectResponseList();
@@ -88,8 +88,9 @@ class ReportSyncService {
         return negativeList;
     }
 
-    private ReportSyncRequest generateReportSync(String paramType, String
-            params, ReportSyncRequest reportToupdate) {
+    private ReportSyncRequest generateReportSync(final String paramType,
+                                                 final String params,
+                                                 final ReportSyncRequest reportToupdate) {
 
         SearchGovResponse govResponseReportSync = (SearchGovResponse) reportToupdate.getGovResponse();
         GovResponse negativGovResponseReportySync = new SearchGovResponse(

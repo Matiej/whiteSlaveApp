@@ -1,4 +1,4 @@
-package com.whiteslave.whiteslaveApp.controller;
+package com.whiteslave.whiteslaveApp.controller.headerHandler;
 
 
 import com.whiteslave.whiteslaveApp.exceptionHandler.WhiteSlaveExceptionHandler;
@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -28,7 +30,8 @@ public class AddResponseHeaderWebFilter implements Filter {
         int status = res.getStatus();
 
         if (status == HttpStatus.OK.value() || status == HttpStatus.CREATED.value()) {
-            res.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, originValue);
+            //todo nie działa z tym front
+//            res.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, originValue);
             res.setHeader(HttpHeaders.CONTENT_LANGUAGE, "en-us");
             res.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.getType());
         }
