@@ -30,8 +30,8 @@ public class WhiteSlaveExceptionHandler extends ResponseEntityExceptionHandler {
     public final ResponseEntity<Object> handleConstraintViolationException(Exception ex, WebRequest request) {
         String message = "Validation error ==> ";
         log.error(message, ex);
-        ExceptionHandlerResponse exceptionResponse = getExceptionHandlerResponse(ex, request, message);
         HttpStatus badRequest = HttpStatus.BAD_REQUEST;
+        ExceptionHandlerResponse exceptionResponse = getExceptionHandlerResponse(ex, message, badRequest);
         return ResponseEntity.status(badRequest)
                 .headers(getExceptionHeaders(badRequest.name(), message))
                 .body(exceptionResponse);
@@ -41,8 +41,8 @@ public class WhiteSlaveExceptionHandler extends ResponseEntityExceptionHandler {
     public final ResponseEntity<Object> handleMfGovExceptionnException(MfGovException ex, WebRequest request) {
         String message = "MfGovException error  ==> ";
         log.error(message, ex);
-        ExceptionHandlerResponse exceptionResponse = getExceptionHandlerResponse(ex, request, message);
         HttpStatus badRequest = HttpStatus.BAD_REQUEST;
+        ExceptionHandlerResponse exceptionResponse = getExceptionHandlerResponse(ex, message, badRequest);
         return ResponseEntity.status(badRequest)
                 .headers(getExceptionHeaders(badRequest.name(), message))
                 .body(exceptionResponse);
@@ -61,8 +61,8 @@ public class WhiteSlaveExceptionHandler extends ResponseEntityExceptionHandler {
             message = "External server error. ";
             log.error(message, rex);
         }
-        ExceptionHandlerResponse exceptionResponse = getExceptionHandlerResponse(rex, request, message);
         HttpStatus serviceUnavailable = HttpStatus.SERVICE_UNAVAILABLE;
+        ExceptionHandlerResponse exceptionResponse = getExceptionHandlerResponse(rex, message, serviceUnavailable);
         return ResponseEntity.status(serviceUnavailable)
                 .headers(getExceptionHeaders(serviceUnavailable.name(), message))
                 .body(exceptionResponse);
@@ -71,9 +71,9 @@ public class WhiteSlaveExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler({FileNotFoundException.class})
     public final ResponseEntity<Object> handleFileNotFoundException(RuntimeException rex, WebRequest request) {
         String message = "Report file not found!";
-        ExceptionHandlerResponse exceptionResponse = getExceptionHandlerResponse(rex, request, message);
         log.error(message, rex);
         HttpStatus notFound = HttpStatus.NOT_FOUND;
+        ExceptionHandlerResponse exceptionResponse = getExceptionHandlerResponse(rex,message, notFound);
         return ResponseEntity.status(notFound)
                 .contentType(MediaType.APPLICATION_JSON)
                 .headers(getExceptionHeaders(String.valueOf(notFound.value()), message))
@@ -83,9 +83,9 @@ public class WhiteSlaveExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler({UserExistException.class})
     public final ResponseEntity<Object> handleFileUserExistException(RuntimeException rex, WebRequest request) {
         String message = "User exist error.";
-        ExceptionHandlerResponse exceptionResponse = getExceptionHandlerResponse(rex, request, message);
         log.error(message, rex);
         HttpStatus notFound = HttpStatus.NOT_FOUND;
+        ExceptionHandlerResponse exceptionResponse = getExceptionHandlerResponse(rex,message, notFound);
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .contentType(MediaType.APPLICATION_JSON)
                 .headers(getExceptionHeaders(String.valueOf(notFound.value()), message))
@@ -97,18 +97,19 @@ public class WhiteSlaveExceptionHandler extends ResponseEntityExceptionHandler {
                                                                           HttpHeaders headers, HttpStatus status, WebRequest request) {
         String message = "error servlet params ";
         log.error(message, ex);
-        ExceptionHandlerResponse exceptionHandlerResponse = getExceptionHandlerResponse(ex, request, message);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        HttpStatus badRequest = HttpStatus.BAD_REQUEST;
+        ExceptionHandlerResponse exceptionHandlerResponse = getExceptionHandlerResponse(ex, message,badRequest );
+        return ResponseEntity.status(badRequest)
                 .headers(getExceptionHeaders(HttpStatus.BAD_REQUEST.name(), message))
                 .body(exceptionHandlerResponse);
     }
 
-    private ExceptionHandlerResponse getExceptionHandlerResponse(Exception ex, WebRequest request, String message) {
+    private ExceptionHandlerResponse getExceptionHandlerResponse(Exception ex, String message, HttpStatus httpStatus) {
         String details = ex.getMessage();
         if (ex instanceof ConstraintViolationException) {
             details = ex.getMessage().substring(ex.getMessage().indexOf(":") + 1);
         }
-        return new ExceptionHandlerResponse(LocalDateTime.now().withNano(0), message, details);
+        return new ExceptionHandlerResponse(LocalDateTime.now().withNano(0), message, details, String.valueOf(httpStatus.value()), httpStatus.name());
     }
 
     private HttpHeaders getExceptionHeaders(String status, String message) {

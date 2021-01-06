@@ -24,6 +24,7 @@ import static com.whiteslave.whiteslaveApp.controller.headerHandler.HttpHeaderFa
 @RequestMapping("/reportquery")
 @RequiredArgsConstructor
 @Api(description = "Queries to the archive of reports with information from the government's white list.")
+//@CrossOrigin(origins = "${cross.origin.webui}")
 @CrossOrigin(origins = "${cross.origin.webui}")
 class ArchReportQueryController {
 

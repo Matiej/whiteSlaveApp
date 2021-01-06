@@ -5,6 +5,7 @@ import com.whiteslave.whiteslaveApp.reportSync.ReportFacade;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -47,7 +48,7 @@ class GovCheckReportController {
                 .body(checkReportDto);
     }
 
-    @GetMapping("/regon&bankaccount/date")
+    @GetMapping(value = "/regon&bankaccount/date", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Check for quick company information by regon, bank account number and date.", response = CheckReportDto.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Search successful"),
