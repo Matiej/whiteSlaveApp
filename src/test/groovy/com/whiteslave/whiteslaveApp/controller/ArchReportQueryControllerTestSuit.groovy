@@ -38,6 +38,7 @@ class ArchReportQueryControllerTestSuit extends Specification {
 
     def setup() {
         mvc = MockMvcBuilders.standaloneSetup(new ArchReportQueryController(archFacade))
+                .addPlaceholderValue("cross.origin.webui","http://localhost:4200")
                 .setControllerAdvice(new WhiteSlaveExceptionHandler())
                 .build()
     }
